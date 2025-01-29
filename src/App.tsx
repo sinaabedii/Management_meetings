@@ -1,17 +1,23 @@
-import { BrowserRouter as Router } from 'react-router-dom';
-import { ThemeProvider } from './components/common/ThemeProvider';
-import { MainLayout } from './components/layout/MainLayout';
-import AppRoutes from './routes';
+import { BrowserRouter as Router } from "react-router-dom";
+import { AuthProvider } from "./hooks/useAuth";
+import AppRoutes from "./routes";
+import { NotificationProvider } from "./context/NotificationContext";
+import { SettingsProvider } from "./context/SettingsContext";
+import { ThemeProvider } from "./components/common/ThemeProvider";
 
 function App() {
   return (
-    <ThemeProvider>
-      <Router>
-        <MainLayout>
-          <AppRoutes />
-        </MainLayout>
-      </Router>
-    </ThemeProvider>
+    <SettingsProvider>
+      <AuthProvider>
+        <NotificationProvider>
+          <ThemeProvider>
+            <Router>
+              <AppRoutes />
+            </Router>
+          </ThemeProvider>
+        </NotificationProvider>
+      </AuthProvider>
+    </SettingsProvider>
   );
 }
 

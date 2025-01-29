@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useTheme } from '../common/ThemeProvider';
+import { useState } from "react";
+import { Link, Outlet } from "react-router-dom";
+import { useTheme } from "../common/ThemeProvider";
 import {
   CalendarIcon,
   ChartBarIcon,
@@ -10,30 +10,31 @@ import {
   XMarkIcon,
   Bars3Icon,
   SunIcon,
-  MoonIcon
-} from '@heroicons/react/24/outline';
-import clsx from 'clsx';
+  MoonIcon,
+  Cog6ToothIcon,
+} from "@heroicons/react/24/outline";
+import clsx from "clsx";
+import ProfileMenu from "../common/ProfileMenu";
+import NotificationsDropdown from "../common/NotificationsDropdown";
+import SearchDropdown from "../common/SearchDropdown";
+import SettingsModal from "../settings/SettingsModal";
 
 const navigation = [
-  { name: 'داشبورد', href: '/', icon: HomeIcon },
-  { name: 'جلسات', href: '/meetings', icon: CalendarIcon },
-  { name: 'تقویم', href: '/calendar', icon: CalendarIcon },
-  { name: 'کاربران', href: '/users', icon: UsersIcon },
-  { name: 'گزارش‌ها', href: '/reports', icon: ChartBarIcon },
-  { name: 'فایل‌ها', href: '/files', icon: FolderIcon },
+  { name: "داشبورد", href: "/", icon: HomeIcon },
+  { name: "جلسات", href: "/meetings", icon: CalendarIcon },
+  { name: "کاربران", href: "/users", icon: UsersIcon },
+  { name: "گزارش‌ها", href: "/reports", icon: ChartBarIcon },
+  { name: "فایل‌ها", href: "/files", icon: FolderIcon },
 ];
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
-
-export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+export const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+
   const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Mobile sidebar */}
       <div
         className={clsx(
           "fixed inset-0 z-40 flex md:hidden",
@@ -45,7 +46,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <div
           className={clsx(
             "fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity",
-            sidebarOpen ? "opacity-100 ease-out duration-300" : "opacity-0 ease-in duration-200"
+            sidebarOpen
+              ? "opacity-100 ease-out duration-300"
+              : "opacity-0 ease-in duration-200"
           )}
           aria-hidden="true"
           onClick={() => setSidebarOpen(false)}
@@ -69,11 +72,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
 
           <div className="flex-shrink-0 flex items-center px-4">
-            <img
-              className="h-8 w-auto"
-              src="/logo.svg"
-              alt="Logo"
-            />
+            <img className="h-8 w-auto" src="/logo.svg" alt="Logo" />
           </div>
           <div className="mt-5 flex-1 h-0 overflow-y-auto">
             <nav className="px-2 space-y-1">
@@ -94,16 +93,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
         </div>
       </div>
-
-      {/* Static sidebar for desktop */}
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-grow flex-col overflow-y-auto border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 pt-5">
           <div className="flex flex-shrink-0 items-center px-4">
-            <img
-              className="h-8 w-auto"
-              src="/logo.svg"
-              alt="Logo"
-            />
+            <img className="h-8 w-auto" src="/logo.svg" alt="Logo" />
           </div>
           <div className="mt-5 flex-grow flex flex-col">
             <nav className="flex-1 px-2 pb-4 space-y-1">
@@ -124,8 +117,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
         </div>
       </div>
-
-      {/* Main content */}
       <div className="md:pr-64 flex flex-col flex-1">
         <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
           <button
@@ -139,30 +130,41 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           <div className="flex-1 px-4 flex justify-between">
             <div className="flex-1 flex">
-              {/* Search bar can be added here */}
+              <SearchDropdown />
             </div>
-            <div className="ml-4 flex items-center md:ml-6">
+            <div className="ml-4 flex items-center md:ml-6 space-x-4 space-x-reverse">
+              <NotificationsDropdown />
               <button
                 type="button"
                 className="bg-white dark:bg-gray-800 p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 onClick={toggleTheme}
               >
-                {theme === 'light' ? (
+                {theme === "light" ? (
                   <MoonIcon className="h-6 w-6" aria-hidden="true" />
                 ) : (
                   <SunIcon className="h-6 w-6" aria-hidden="true" />
                 )}
               </button>
-
-              {/* Profile dropdown can be added here */}
+              <button
+                type="button"
+                className="bg-white dark:bg-gray-800 p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                onClick={() => setShowSettings(true)}
+              >
+                <Cog6ToothIcon className="h-6 w-6" />
+              </button>
+              <ProfileMenu />
             </div>
           </div>
+          <SettingsModal
+            isOpen={showSettings}
+            onClose={() => setShowSettings(false)}
+          />
         </div>
 
         <main className="flex-1">
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              {children}
+              <Outlet />
             </div>
           </div>
         </main>
@@ -170,3 +172,5 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     </div>
   );
 };
+
+export default MainLayout;

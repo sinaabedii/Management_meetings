@@ -1,32 +1,107 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
-import MeetingDetailsPage from './pages/MeetingDetailsPage';
+import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { PERMISSIONS } from "./types/auth";
+import Login from "./pages/Login";
+import { MainLayout } from "./components/layout/MainLayout";
 
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Meetings = lazy(() => import('./pages/Meetings'));
-const Users = lazy(() => import('./pages/Users'));
-const Reports = lazy(() => import('./pages/Reports'));
-const Files = lazy(() => import('./pages/Files'));
-const Calendar = lazy(() => import('./pages/Calendar'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-
-const Loading = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-  </div>
-);
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Meetings = lazy(() => import("./pages/Meetings"));
+const Users = lazy(() => import("./pages/Users"));
+const Reports = lazy(() => import("./pages/Reports"));
+const Files = lazy(() => import("./pages/Files"));
+const Profile = lazy(() => import("./pages/Profile"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+        </div>
+      }
+    >
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/meetings" element={<Meetings />} />
-        <Route path="/meetings/:id" element={<MeetingDetailsPage  />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/files" element={<Files />} />
-        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/" element={<Dashboard />} />
+
+          <Route
+            path="/meetings"
+            element={
+              <ProtectedRoute
+                requiredPermissions={[PERMISSIONS.MANAGE_MEETINGS]}
+              >
+                <Meetings />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute requiredPermissions={[PERMISSIONS.MANAGE_USERS]}>
+                <Users />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute requiredPermissions={[PERMISSIONS.VIEW_REPORTS]}>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/files"
+            element={
+              <ProtectedRoute requiredPermissions={[PERMISSIONS.MANAGE_FILES]}>
+                <Files />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+
+        <Route
+          path="/unauthorized"
+          element={
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                  دسترسی غیرمجاز
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  شما مجوز دسترسی به این صفحه را ندارید
+                </p>
+                <Link
+                  to="/"
+                  className="text-primary-600 hover:text-primary-500"
+                >
+                  بازگشت به صفحه اصلی
+                </Link>
+              </div>
+            </div>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
