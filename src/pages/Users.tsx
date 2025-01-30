@@ -23,16 +23,7 @@ interface User {
   meetingsOrganized: number;
   completedTasks: number;
 }
-interface UserFormData {
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  department: string;
-  status: "active" | "inactive";
-  password?: string;
-  confirmPassword?: string;
-}
+
 
 const MOCK_USERS: User[] = [
   {
