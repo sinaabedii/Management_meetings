@@ -24,9 +24,11 @@
     "date-fns": "^3.0.6",
     "date-fns-jalali": "^4.1.0-0",
     "moment-jalaali": "^0.10.4",
+    "motion": "^12.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.2",
+    "react-icons": "^5.4.0",
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.21.1",
     "recharts": "^2.15.0"
