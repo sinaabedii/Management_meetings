@@ -4,6 +4,9 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { PERMISSIONS } from "./types/auth";
 import Login from "./pages/Login";
 import { MainLayout } from "./components/layout/MainLayout";
+import MeetingDetailsPage from "./pages/MeetingDetailsPage";
+import UserDetails from "./pages/UserDetails";
+import FileDetails from "./pages/FileDetails";
 
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Meetings = lazy(() => import("./pages/Meetings"));
@@ -11,6 +14,7 @@ const Users = lazy(() => import("./pages/Users"));
 const Reports = lazy(() => import("./pages/Reports"));
 const Files = lazy(() => import("./pages/Files"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Calendar = lazy(() => import("./pages/Calendar")); 
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const AppRoutes = () => {
@@ -32,7 +36,16 @@ const AppRoutes = () => {
           }
         >
           <Route path="/" element={<Dashboard />} />
-
+          <Route
+            path="/calendar"
+            element={
+              <ProtectedRoute
+                requiredPermissions={[PERMISSIONS.MANAGE_MEETINGS]}
+              >
+                <Calendar />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/meetings"
             element={
@@ -43,7 +56,16 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-
+          <Route
+            path="/meetings/:id"
+            element={
+              <ProtectedRoute
+                requiredPermissions={[PERMISSIONS.MANAGE_MEETINGS]}
+              >
+                <MeetingDetailsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/users"
             element={
@@ -52,7 +74,14 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-
+          <Route
+            path="/users/:id"
+            element={
+              <ProtectedRoute requiredPermissions={[PERMISSIONS.MANAGE_USERS]}>
+                <UserDetails />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/reports"
             element={
@@ -61,7 +90,6 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/files"
             element={
@@ -70,8 +98,15 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/files/:id"
+            element={
+              <ProtectedRoute requiredPermissions={[PERMISSIONS.MANAGE_FILES]}>
+                <FileDetails />
+              </ProtectedRoute>
+            }
+          />
         </Route>
-
         <Route
           path="/unauthorized"
           element={
@@ -101,7 +136,6 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>

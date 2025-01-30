@@ -21,6 +21,7 @@ import SettingsModal from "../settings/SettingsModal";
 
 const navigation = [
   { name: "داشبورد", href: "/", icon: HomeIcon },
+  { name: "تقویم", href: "/calendar", icon: CalendarIcon },
   { name: "جلسات", href: "/meetings", icon: CalendarIcon },
   { name: "کاربران", href: "/users", icon: UsersIcon },
   { name: "گزارش‌ها", href: "/reports", icon: ChartBarIcon },
@@ -34,136 +35,120 @@ export const MainLayout = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div
         className={clsx(
-          "fixed inset-0 z-40 flex md:hidden",
-          sidebarOpen ? "visible" : "invisible"
+          "fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden transition-opacity duration-300",
+          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
-        role="dialog"
-        aria-modal="true"
+        onClick={() => setSidebarOpen(false)}
+      />
+      <div
+        className={clsx(
+          "fixed inset-y-0 right-0 z-50 w-64 bg-white/80 backdrop-blur-xl dark:bg-gray-800/90 shadow-lg md:hidden",
+          "transform transition-transform duration-300 ease-out",
+          sidebarOpen ? "translate-x-0" : "translate-x-full"
+        )}
       >
-        <div
-          className={clsx(
-            "fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity",
-            sidebarOpen
-              ? "opacity-100 ease-out duration-300"
-              : "opacity-0 ease-in duration-200"
-          )}
-          aria-hidden="true"
-          onClick={() => setSidebarOpen(false)}
-        />
-
-        <div
-          className={clsx(
-            "relative flex w-full max-w-xs flex-1 flex-col bg-white dark:bg-gray-800 pt-5 pb-4 transition ease-in-out duration-300 transform",
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          )}
-        >
-          <div className="absolute top-0 left-0 -ml-12 pt-2">
+        <div className="h-full flex flex-col">
+          <div className="flex justify-between items-center px-4 h-16 border-b border-gray-100 dark:border-gray-700">
+            <img className="h-8" src="/logo.svg" alt="Logo" />
             <button
-              type="button"
-              className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               onClick={() => setSidebarOpen(false)}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors duration-200"
             >
-              <span className="sr-only">Close sidebar</span>
-              <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
+              <XMarkIcon className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="flex-shrink-0 flex items-center px-4">
-            <img className="h-8 w-auto" src="/logo.svg" alt="Logo" />
-          </div>
-          <div className="mt-5 flex-1 h-0 overflow-y-auto">
-            <nav className="px-2 space-y-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                >
-                  <item.icon
-                    className="ml-4 flex-shrink-0 h-6 w-6 text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
-                    aria-hidden="true"
-                  />
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                onClick={() => {
+                  setSidebarOpen(false);
+                }}
+                className="group flex items-center px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-200 transform hover:scale-102 active:scale-98"
+              >
+                <item.icon className="ml-3 h-5 w-5 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors duration-200" />
+                {item.name}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
-      <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-        <div className="flex flex-grow flex-col overflow-y-auto border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 pt-5">
-          <div className="flex flex-shrink-0 items-center px-4">
-            <img className="h-8 w-auto" src="/logo.svg" alt="Logo" />
+      <div className="hidden md:fixed md:inset-y-0 md:right-0 md:flex md:w-64 md:flex-col">
+        <div className="flex flex-col flex-1 bg-white/80 backdrop-blur-xl dark:bg-gray-800/90 shadow-lg">
+          <div className="flex justify-center h-16 items-center px-4 border-b border-gray-100 dark:border-gray-700">
+            <img className="h-8" src="/logo.svg" alt="Logo" />
           </div>
-          <div className="mt-5 flex-grow flex flex-col">
-            <nav className="flex-1 px-2 pb-4 space-y-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                >
-                  <item.icon
-                    className="ml-3 flex-shrink-0 h-6 w-6 text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
-                    aria-hidden="true"
-                  />
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
+
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className="group flex items-center px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-200"
+              >
+                <item.icon className="ml-3 h-5 w-5 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400" />
+                {item.name}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
-      <div className="md:pr-64 flex flex-col flex-1">
-        <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
-          <button
-            type="button"
-            className="px-4 border-l border-gray-200 dark:border-gray-700 text-gray-500 md:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <span className="sr-only">Open sidebar</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-          </button>
 
-          <div className="flex-1 px-4 flex justify-between">
-            <div className="flex-1 flex">
-              <SearchDropdown />
-            </div>
-            <div className="ml-4 flex items-center md:ml-6 space-x-4 space-x-reverse">
-              <NotificationsDropdown />
+      <div className="md:pr-64">
+        <header className="fixed top-0 right-0 left-0 md:right-64 z-30">
+          <div className="bg-white/80 backdrop-blur-xl dark:bg-gray-800/90 shadow-sm">
+            <div className="flex h-16 items-center justify-between px-4">
               <button
-                type="button"
-                className="bg-white dark:bg-gray-800 p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                onClick={toggleTheme}
+                onClick={() => setSidebarOpen(true)}
+                className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
               >
-                {theme === "light" ? (
-                  <MoonIcon className="h-6 w-6" aria-hidden="true" />
-                ) : (
-                  <SunIcon className="h-6 w-6" aria-hidden="true" />
-                )}
+                <Bars3Icon className="h-5 w-5" />
               </button>
-              <button
-                type="button"
-                className="bg-white dark:bg-gray-800 p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                onClick={() => setShowSettings(true)}
-              >
-                <Cog6ToothIcon className="h-6 w-6" />
-              </button>
-              <ProfileMenu />
+
+              <div className="flex-1 flex justify-center px-2 lg:ml-6 lg:justify-start">
+                <div className="w-full max-w-lg lg:max-w-xs">
+                  <SearchDropdown />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <NotificationsDropdown />
+
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                >
+                  {theme === "light" ? (
+                    <MoonIcon className="h-5 w-5" />
+                  ) : (
+                    <SunIcon className="h-5 w-5" />
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <Cog6ToothIcon className="h-5 w-5" />
+                </button>
+
+                <ProfileMenu />
+              </div>
             </div>
+            <SettingsModal
+              isOpen={showSettings}
+              onClose={() => setShowSettings(false)}
+            />
           </div>
-          <SettingsModal
-            isOpen={showSettings}
-            onClose={() => setShowSettings(false)}
-          />
-        </div>
-
-        <main className="flex-1">
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        </header>
+        <main className="pt-16">
+          <div className="px-4 py-6 max-w-7xl mx-auto">
+            <div className="bg-white/60 backdrop-blur-xl dark:bg-gray-800/60 rounded-xl shadow-sm p-6 transition-all duration-300 hover:shadow-md">
               <Outlet />
             </div>
           </div>

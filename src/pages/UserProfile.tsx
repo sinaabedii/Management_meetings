@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import {
   EnvelopeIcon,
@@ -76,7 +75,7 @@ const MOCK_USER = {
 
 const UserProfile = () => {
   const { id } = useParams<{ id: string }>();
-  const user = MOCK_USER; // در واقعیت باید از API خوانده شود
+  const user = MOCK_USER; 
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -241,8 +240,6 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-
-      {/* Skills & Recent Activities */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">

@@ -37,6 +37,9 @@ const AppSettings = () => {
     setLanguage,
   } = useSettings();
 
+  
+  
+
   return (
     <div className="space-y-8">
       {/* Theme Selection */}

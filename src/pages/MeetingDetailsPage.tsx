@@ -97,7 +97,7 @@ const MeetingDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
-  const [meeting] = useState(MOCK_MEETING); // در پروژه واقعی از API فراخوانی می‌شود
+  const [meeting] = useState(MOCK_MEETING); 
 
   const handleEdit = () => {
     setShowEditModal(true);
@@ -105,14 +105,12 @@ const MeetingDetailsPage = () => {
 
   const handleDelete = () => {
     if (window.confirm("آیا از حذف این جلسه اطمینان دارید؟")) {
-      // در پروژه واقعی درخواست حذف به API ارسال می‌شود
       console.log("Deleting meeting:", id);
       navigate("/meetings");
     }
   };
 
   const handleUpdate = (data: any) => {
-    // در پروژه واقعی درخواست به‌روزرسانی به API ارسال می‌شود
     console.log("Updating meeting:", id, data);
     setShowEditModal(false);
   };
@@ -145,15 +143,12 @@ const MeetingDetailsPage = () => {
           meetingId={meeting.id}
           resolutions={meeting.resolutions || []}
           onAddResolution={(newResolution) => {
-            // در اینجا باید با API ارتباط برقرار کنید
             console.log("Adding new resolution:", newResolution);
           }}
           onUpdateResolution={(id, resolution) => {
-            // در اینجا باید با API ارتباط برقرار کنید
             console.log("Updating resolution:", id, resolution);
           }}
           onDeleteResolution={(id) => {
-            // در اینجا باید با API ارتباط برقرار کنید
             console.log("Deleting resolution:", id);
           }}
         />

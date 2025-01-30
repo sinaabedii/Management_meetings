@@ -65,7 +65,23 @@ const COLOR_SCHEMES = {
     900: "#451a03",
   },
 };
-
+const applyTheme = (colorScheme: string) => {
+  const root = document.documentElement;
+  root.setAttribute('data-theme', colorScheme);
+};
+const applyLanguage = (language: string) => {
+  const root = document.documentElement;
+  root.setAttribute('lang', language);
+  
+  // اضافه کردن فونت مناسب
+  if (language === 'fa') {
+    root.style.fontFamily = 'Vazirmatn, sans-serif';
+  } else if (language === 'en') {
+    root.style.fontFamily = 'Inter, sans-serif';
+  } else if (language === 'ar') {
+    root.style.fontFamily = 'Noto Sans Arabic, sans-serif';
+  }
+};
 const LANGUAGE_CONFIGS = {
   fa: {
     direction: "rtl" as const,
@@ -81,6 +97,7 @@ const LANGUAGE_CONFIGS = {
   },
 };
 
+
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -95,6 +112,16 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [language, setLanguage] = useState<Language>(() => {
     return (localStorage.getItem("language") as Language) || "fa";
   });
+
+  useEffect(() => {
+    applyTheme(colorScheme);
+    localStorage.setItem('colorScheme', colorScheme);
+  }, [colorScheme]);
+
+  useEffect(() => {
+    applyLanguage(language);
+    localStorage.setItem('language', language);
+  }, [language]);
 
   // تنظیم تم
   useEffect(() => {
@@ -120,6 +147,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme]);
+  
 
   // تنظیم رنگ اصلی
   useEffect(() => {

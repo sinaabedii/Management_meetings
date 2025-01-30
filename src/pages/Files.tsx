@@ -11,6 +11,7 @@ import {
   ArrowDownTrayIcon,
   DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 interface File {
   id: number;
@@ -47,7 +48,6 @@ const MOCK_FILES: File[] = [
     meeting: "جلسه برنامه‌ریزی پروژه",
     tags: ["برنامه‌ریزی"],
   },
-  // ... سایر فایل‌ها
 ];
 
 const getFileIcon = (type: File["type"]) => {
@@ -75,7 +75,6 @@ const Files = () => {
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    // در اینجا پردازش آپلود فایل انجام می‌شود
     console.log("Files to upload:", files);
   };
 
@@ -98,7 +97,6 @@ const Files = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           مدیریت فایل‌ها
@@ -132,10 +130,8 @@ const Files = () => {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* Search */}
           <div className="relative">
             <MagnifyingGlassIcon className="h-5 w-5 absolute right-3 top-3 text-gray-400" />
             <input
@@ -146,8 +142,6 @@ const Files = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
-          {/* File Type Filter */}
           <div>
             <select
               className="input-primary w-full"
@@ -161,8 +155,6 @@ const Files = () => {
               <option value="audio">فایل‌های صوتی</option>
             </select>
           </div>
-
-          {/* Meeting Filter */}
           <div>
             <select
               className="input-primary w-full"
@@ -173,11 +165,8 @@ const Files = () => {
               <option value="جلسه برنامه‌ریزی پروژه">
                 جلسه برنامه‌ریزی پروژه
               </option>
-              {/* سایر جلسات */}
             </select>
           </div>
-
-          {/* View Mode */}
           <div className="flex justify-end">
             <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
               <button
@@ -204,8 +193,6 @@ const Files = () => {
           </div>
         </div>
       </div>
-
-      {/* Files Grid/List */}
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredFiles.map((file) => (
@@ -232,9 +219,12 @@ const Files = () => {
                   }}
                 />
               </div>
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+              <Link
+                to={`/files/${file.id}`}
+                className="font-medium text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 mb-2 block"
+              >
                 {file.name}
-              </h3>
+              </Link>
               <div className="text-sm text-gray-500 dark:text-gray-400 space-y-1">
                 <p>اندازه: {file.size}</p>
                 <p>آپلود: {file.uploadDate}</p>
@@ -338,9 +328,12 @@ const Files = () => {
                     <div className="flex items-center">
                       {getFileIcon(file.type)}
                       <div className="mr-4">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        <Link
+                          to={`/files/${file.id}`}
+                          className="text-sm font-medium text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400"
+                        >
                           {file.name}
-                        </div>
+                        </Link>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
                           {file.meeting}
                         </div>
