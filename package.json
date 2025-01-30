@@ -23,6 +23,7 @@
     "clsx": "^2.0.0",
     "date-fns": "^3.0.6",
     "date-fns-jalali": "^4.1.0-0",
+    "lucide-react": "^0.474.0",
     "moment-jalaali": "^0.10.4",
     "motion": "^12.0.6",
     "react": "^18.2.0",
