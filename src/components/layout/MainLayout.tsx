@@ -52,7 +52,7 @@ export const MainLayout = () => {
       >
         <div className="h-full flex flex-col">
           <div className="flex justify-between items-center px-4 h-16 border-b border-gray-100 dark:border-gray-700">
-            <img className="h-8" src="/logo.svg" alt="Logo" />
+            <img className="h-8" src="./public/assets/logo.png" alt="Logo" />
             <button
               onClick={() => setSidebarOpen(false)}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors duration-200"
@@ -82,7 +82,7 @@ export const MainLayout = () => {
       <div className="hidden md:fixed md:inset-y-0 md:right-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-1 bg-white/80 backdrop-blur-xl dark:bg-gray-800/90 shadow-lg">
           <div className="flex justify-center h-16 items-center px-4 border-b border-gray-100 dark:border-gray-700">
-            <img className="h-8" src="/logo.svg" alt="Logo" />
+            <img className="h-8" src="./public/assets/logo.png" alt="Logo" />
           </div>
 
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">

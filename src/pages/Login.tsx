@@ -37,8 +37,8 @@ const Login = () => {
           <div className="mx-auto h-12 w-12 relative">
             <div className="absolute inset-0 bg-blue-500 rounded-xl transform rotate-6 transition-transform group-hover:rotate-12" />
             <div className="absolute inset-0 bg-purple-500 rounded-xl transform -rotate-6 transition-transform group-hover:-rotate-12" />
-            <div className="relative bg-white dark:bg-gray-800 rounded-xl p-2">
-              <Camera className="h-8 w-8 text-blue-500" />
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl p-1.5">
+              <img src="./public/assets/logo.png" alt="logo" className='' />
             </div>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
