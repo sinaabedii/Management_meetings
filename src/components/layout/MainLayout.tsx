@@ -45,7 +45,7 @@ export const MainLayout = () => {
       />
       <div
         className={clsx(
-          "fixed inset-y-0 right-0 z-50 w-64 bg-white/80 backdrop-blur-xl dark:bg-gray-800/90 shadow-lg md:hidden",
+          "fixed inset-y-0 right-0 z-50 w-64 bg-white/80 rounded-l-2xl backdrop-blur-xl dark:bg-gray-800/90 shadow-lg md:hidden",
           "transform transition-transform duration-300 ease-out",
           sidebarOpen ? "translate-x-0" : "translate-x-full"
         )}
@@ -76,6 +76,7 @@ export const MainLayout = () => {
               </Link>
             ))}
           </nav>
+        <h1>aaa</h1>
         </div>
       </div>
       <div className="hidden md:fixed md:inset-y-0 md:right-0 md:flex md:w-64 md:flex-col">
