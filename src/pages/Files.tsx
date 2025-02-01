@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   DocumentIcon,
   PhotoIcon,
@@ -96,29 +97,49 @@ const Files = () => {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+    <div className="container mx-auto px-4">
+      {/* Header Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex justify-between items-center mb-8"
+      >
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
           مدیریت فایل‌ها
         </h1>
         <div className="flex items-center space-x-4 space-x-reverse">
           {selectedFiles.length > 0 && (
             <>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-4 py-2 bg-red-500 text-white rounded-xl shadow-lg shadow-red-500/30 
+                hover:shadow-red-500/40 transition-all duration-300 flex items-center gap-2"
                 onClick={handleDeleteSelected}
-                className="btn-secondary bg-red-500 hover:bg-red-600 text-white flex items-center"
               >
-                <TrashIcon className="h-5 w-5 ml-2" />
+                <TrashIcon className="h-5 w-5" />
                 حذف انتخاب شده
-              </button>
-              <button className="btn-secondary flex items-center">
-                <ArrowDownTrayIcon className="h-5 w-5 ml-2" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl 
+                shadow-lg shadow-purple-500/30 hover:shadow-blue-500/40 transition-all duration-300 
+                flex items-center gap-2"
+              >
+                <ArrowDownTrayIcon className="h-5 w-5" />
                 دانلود
-              </button>
+              </motion.button>
             </>
           )}
-          <label className="btn-primary cursor-pointer flex items-center">
-            <ArrowUpTrayIcon className="h-5 w-5 ml-2" />
+          <motion.label
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl 
+            shadow-lg shadow-purple-500/30 hover:shadow-blue-500/40 transition-all duration-300 
+            flex items-center gap-2 cursor-pointer"
+          >
+            <ArrowUpTrayIcon className="h-5 w-5" />
             آپلود فایل
             <input
               type="file"
@@ -126,25 +147,35 @@ const Files = () => {
               className="hidden"
               onChange={handleFileUpload}
             />
-          </label>
+          </motion.label>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+      {/* Search Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+        border border-gray-200/30 dark:border-gray-700/30 shadow-lg p-6 mb-8"
+      >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <MagnifyingGlassIcon className="h-5 w-5 absolute right-3 top-3 text-gray-400" />
             <input
               type="text"
               placeholder="جستجو در فایل‌ها..."
-              className="input-primary pr-10 w-full"
+              className="w-full pr-10 px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 
+              backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
+              focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div>
             <select
-              className="input-primary w-full"
+              className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 
+              backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
+              focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
             >
@@ -157,7 +188,9 @@ const Files = () => {
           </div>
           <div>
             <select
-              className="input-primary w-full"
+              className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 
+              backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
+              focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={selectedMeeting}
               onChange={(e) => setSelectedMeeting(e.target.value)}
             >
@@ -168,147 +201,165 @@ const Files = () => {
             </select>
           </div>
           <div className="flex justify-end">
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <div className="bg-white/80 dark:bg-gray-700/80 rounded-xl p-1">
               <button
-                className={`px-3 py-1 rounded-md ${
+                onClick={() => setViewMode("grid")}
+                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
                   viewMode === "grid"
-                    ? "bg-white dark:bg-gray-600 shadow"
+                    ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md"
                     : "text-gray-600 dark:text-gray-300"
                 }`}
-                onClick={() => setViewMode("grid")}
               >
                 شبکه‌ای
               </button>
               <button
-                className={`px-3 py-1 rounded-md ${
+                onClick={() => setViewMode("list")}
+                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
                   viewMode === "list"
-                    ? "bg-white dark:bg-gray-600 shadow"
+                    ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md"
                     : "text-gray-600 dark:text-gray-300"
                 }`}
-                onClick={() => setViewMode("list")}
               >
                 لیستی
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
+
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredFiles.map((file) => (
-            <div
+          {filteredFiles.map((file, index) => (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
               key={file.id}
-              className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 ${
-                selectedFiles.includes(file.id) ? "ring-2 ring-primary-500" : ""
-              }`}
+              className="group bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+              border border-gray-200/30 dark:border-gray-700/30 shadow-lg
+              hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300
+              relative overflow-hidden"
             >
-              <div className="flex items-start justify-between mb-4">
-                {getFileIcon(file.type)}
-                <input
-                  type="checkbox"
-                  className="ml-2"
-                  checked={selectedFiles.includes(file.id)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedFiles([...selectedFiles, file.id]);
-                    } else {
-                      setSelectedFiles(
-                        selectedFiles.filter((id) => id !== file.id)
-                      );
-                    }
-                  }}
-                />
-              </div>
-              <Link
-                to={`/files/${file.id}`}
-                className="font-medium text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 mb-2 block"
-              >
-                {file.name}
-              </Link>
-              <div className="text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                <p>اندازه: {file.size}</p>
-                <p>آپلود: {file.uploadDate}</p>
-                {file.meeting && <p>جلسه: {file.meeting}</p>}
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {file.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-md text-xs"
+              <div
+                className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500/50 to-blue-500/50 
+              transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100"
+              />
+
+              <div className="p-6">
+                <div className="flex items-start justify-between">
+                  <div
+                    className="p-3 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl 
+                  group-hover:scale-110 transition-all duration-300"
                   >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-4 flex justify-end space-x-2 space-x-reverse">
-                <button className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                  <PencilIcon className="h-5 w-5" />
-                </button>
-                <button className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                  <DocumentDuplicateIcon className="h-5 w-5" />
-                </button>
-                <button className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                  <ArrowDownTrayIcon className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-right">
+                    {getFileIcon(file.type)}
+                  </div>
                   <input
                     type="checkbox"
+                    className="form-checkbox h-5 w-5 text-purple-600 rounded-lg border-gray-300"
+                    checked={selectedFiles.includes(file.id)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedFiles(files.map((f) => f.id));
+                        setSelectedFiles([...selectedFiles, file.id]);
                       } else {
-                        setSelectedFiles([]);
+                        setSelectedFiles(
+                          selectedFiles.filter((id) => id !== file.id)
+                        );
                       }
                     }}
                   />
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                </div>
+
+                <Link
+                  to={`/files/${file.id}`}
+                  className="mt-4 font-medium text-gray-900 dark:text-white hover:text-purple-600 
+                  dark:hover:text-purple-400 transition-colors duration-300 block"
                 >
+                  {file.name}
+                </Link>
+
+                <div className="mt-3 space-y-1">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    اندازه: {file.size}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    آپلود: {file.uploadDate}
+                  </p>
+                  {file.meeting && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      جلسه: {file.meeting}
+                    </p>
+                  )}
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {file.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 text-sm bg-gradient-to-r from-purple-500/10 to-blue-500/10 
+                      rounded-lg text-gray-600 dark:text-gray-300"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div
+                  className="mt-4 flex justify-end space-x-2 space-x-reverse opacity-0 group-hover:opacity-100 
+                transition-opacity duration-300"
+                >
+                  <button className="p-2 hover:bg-purple-500/10 rounded-lg transition-colors duration-300">
+                    <PencilIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  </button>
+                  <button className="p-2 hover:bg-purple-500/10 rounded-lg transition-colors duration-300">
+                    <DocumentDuplicateIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  </button>
+                  <button className="p-2 hover:bg-purple-500/10 rounded-lg transition-colors duration-300">
+                    <ArrowDownTrayIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+          border border-gray-200/30 dark:border-gray-700/30 shadow-lg overflow-hidden"
+        >
+          <table className="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+            <thead className="bg-gray-50/50 dark:bg-gray-700/50">
+              <tr>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   نام فایل
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                >
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   نوع
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                >
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  نام فایل
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   اندازه
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                >
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   تاریخ آپلود
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                >
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   آپلود کننده
-                </th>
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">عملیات</span>
-                </th>
+                </th>{" "}
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {filteredFiles.map((file) => (
-                <tr key={file.id}>
+            <tbody className="divide-y divide-gray-200/50 dark:divide-gray-700/50">
+              {filteredFiles.map((file, index) => (
+                <motion.tr
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  key={file.id}
+                  className="group hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors duration-300"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <input
                       type="checkbox"
@@ -324,63 +375,11 @@ const Files = () => {
                       }}
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      {getFileIcon(file.type)}
-                      <div className="mr-4">
-                        <Link
-                          to={`/files/${file.id}`}
-                          className="text-sm font-medium text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400"
-                        >
-                          {file.name}
-                        </Link>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {file.meeting}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900 dark:text-white">
-                      {file.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900 dark:text-white">
-                      {file.size}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 dark:text-white">
-                      {file.uploadDate}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 dark:text-white">
-                      {file.uploadedBy}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end space-x-2 space-x-reverse">
-                      <button className="text-primary-600 hover:text-primary-900">
-                        <PencilIcon className="h-5 w-5" />
-                      </button>
-                      <button className="text-primary-600 hover:text-primary-900">
-                        <DocumentDuplicateIcon className="h-5 w-5" />
-                      </button>
-                      <button className="text-primary-600 hover:text-primary-900">
-                        <ArrowDownTrayIcon className="h-5 w-5" />
-                      </button>
-                      <button className="text-red-600 hover:text-red-900">
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </motion.div>
       )}
     </div>
   );

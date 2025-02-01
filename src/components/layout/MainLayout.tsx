@@ -187,8 +187,7 @@ export const MainLayout = () => {
         <main className="pt-16">
           <div className="px-4 py-6 mx-auto">
             <div
-              className=" p-6 transition-all duration-300 
-            "
+              className="p-3 transition-all duration-300"
             >
               <Outlet />
             </div>

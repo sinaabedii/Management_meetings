@@ -12,7 +12,7 @@ import {
   Scatter,
   Area
 } from "recharts";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ChartBarIcon,
   PresentationChartLineIcon,

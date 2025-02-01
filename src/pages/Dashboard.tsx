@@ -86,7 +86,7 @@ const Dashboard = () => {
               </p>
             </div>
           </div>
-          <div className="flex justify-center lg:w-1/3 ">
+          <div className="flex justify-center lg:w-1/4 ">
             <div className="w-full max-w-[400px] h-[300px] sm:h-[350px] md:h-[400px] overflow-hidden bg-white/10">
               <video
                 className="w-full h-full object-cover p-0"

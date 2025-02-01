@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   DocumentIcon,
   CalendarIcon,
@@ -10,6 +11,7 @@ import {
   LinkIcon,
   EyeIcon,
   DocumentDuplicateIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 
@@ -86,137 +88,174 @@ const FileDetails = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <button
+    <div className="container mx-auto px-4 ">
+      <motion.button
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
         onClick={() => navigate("/files")}
-        className="mb-6 flex items-center text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+        className="mb-6 flex items-center text-gray-600 hover:text-purple-600 dark:text-gray-400 
+        dark:hover:text-purple-400 transition-colors duration-300"
       >
-        <span className="ml-2">←</span>
+        <ArrowLeftIcon className="h-5 w-5 ml-2" />
         بازگشت به لیست فایل‌ها
-      </button>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-        <div className="flex items-start justify-between">
+      </motion.button>
+
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+        border border-gray-200/30 dark:border-gray-700/30 shadow-lg p-8 mb-8"
+      >
+        <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex items-start">
-            {getFileIcon()}
+            <div className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl">
+              {getFileIcon()}
+            </div>
             <div className="mr-4">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <motion.h1 
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 
+                bg-clip-text text-transparent"
+              >
                 {file.name}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
+              </motion.h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
                 {file.description}
               </p>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="flex flex-wrap gap-2 mt-3">
                 {file.tags.map((tag, index) => (
-                  <span
+                  <motion.span
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: index * 0.1 }}
                     key={index}
-                    className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-600 dark:text-gray-300"
+                    className="px-3 py-1 bg-gradient-to-r from-purple-500/10 to-blue-500/10 
+                    rounded-lg text-sm text-gray-600 dark:text-gray-300"
                   >
                     {tag}
-                  </span>
+                  </motion.span>
                 ))}
               </div>
             </div>
           </div>
           <div className="flex space-x-2 space-x-reverse">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleDownload}
-              className="btn-primary flex items-center"
+              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl 
+              shadow-lg shadow-purple-500/30 hover:shadow-blue-500/40 transition-all duration-300 
+              flex items-center"
             >
               <ArrowDownTrayIcon className="h-5 w-5 ml-2" />
               دانلود
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => navigate(`/files/${id}/edit`)}
-              className="btn-secondary flex items-center"
+              className="px-4 py-2 bg-white/20 hover:bg-white/30 text-gray-700 dark:text-gray-300 
+              rounded-xl backdrop-blur-md flex items-center transition-all duration-300"
             >
               <PencilIcon className="h-5 w-5 ml-2" />
               ویرایش
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setShowDeleteConfirm(true)}
-              className="btn-secondary bg-red-600 hover:bg-red-700 text-white flex items-center"
+              className="px-4 py-2 bg-red-500 text-white rounded-xl shadow-lg shadow-red-500/30 
+              hover:shadow-red-500/40 transition-all duration-300 flex items-center"
             >
               <TrashIcon className="h-5 w-5 ml-2" />
               حذف
-            </button>
+            </motion.button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
-          <div className="flex items-center">
-            <CalendarIcon className="h-5 w-5 text-gray-400 ml-2" />
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                تاریخ آپلود
-              </p>
-              <p className="text-gray-900 dark:text-white">
-                {format(file.uploadDate, "yyyy/MM/dd HH:mm")}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <UserIcon className="h-5 w-5 text-gray-400 ml-2" />
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                آپلود کننده
-              </p>
-              <p className="text-gray-900 dark:text-white">{file.uploadedBy}</p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <DocumentDuplicateIcon className="h-5 w-5 text-gray-400 ml-2" />
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                اندازه فایل
-              </p>
-              <p className="text-gray-900 dark:text-white">{file.size}</p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <LinkIcon className="h-5 w-5 text-gray-400 ml-2" />
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                جلسه مرتبط
-              </p>
-              <p className="text-gray-900 dark:text-white">{file.meeting}</p>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+          {[
+            { icon: CalendarIcon, title: 'تاریخ آپلود', value: format(file.uploadDate, "yyyy/MM/dd HH:mm") },
+            { icon: UserIcon, title: 'آپلود کننده', value: file.uploadedBy },
+            { icon: DocumentDuplicateIcon, title: 'اندازه فایل', value: file.size },
+            { icon: LinkIcon, title: 'جلسه مرتبط', value: file.meeting }
+          ].map((item, index) => (
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: index * 0.1 }}
+              key={index}
+              className="flex items-center p-4 bg-white/30 dark:bg-gray-700/30 rounded-xl 
+              backdrop-blur-sm border border-gray-200/20 dark:border-gray-700/20"
+            >
+              <item.icon className="h-5 w-5 text-purple-500 ml-3" />
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{item.title}</p>
+                <p className="font-medium text-gray-900 dark:text-white">{item.value}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-            <EyeIcon className="h-5 w-5 ml-2" />
+      </motion.div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+          border border-gray-200/30 dark:border-gray-700/30 shadow-lg p-6"
+        >
+          <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 
+          bg-clip-text text-transparent mb-4 flex items-center">
+            <EyeIcon className="h-5 w-5 ml-2 text-purple-500" />
             آمار استفاده
           </h2>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                تعداد بازدید
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {file.views}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                تعداد دانلود
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {file.downloads}
-              </p>
-            </div>
+            {[
+              { title: 'تعداد بازدید', value: file.views },
+              { title: 'تعداد دانلود', value: file.downloads }
+            ].map((stat, index) => (
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                key={index}
+                className="p-4 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-xl"
+              >
+                <p className="text-sm text-gray-600 dark:text-gray-400">{stat.title}</p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 
+                bg-clip-text text-transparent">{stat.value}</p>
+              </motion.div>
+            ))}
           </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+        </motion.div>
+
+        <motion.div
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+          border border-gray-200/30 dark:border-gray-700/30 shadow-lg p-6"
+        >
+          <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 
+          bg-clip-text text-transparent mb-4">
             سابقه دسترسی
           </h2>
           <div className="space-y-4">
             {file.accessHistory.map((access, index) => (
-              <div key={index} className="flex items-center justify-between">
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                key={index}
+                className="flex items-center justify-between p-3 bg-gradient-to-br 
+                from-purple-500/5 to-blue-500/5 rounded-xl"
+              >
                 <div>
-                  <p className="text-gray-900 dark:text-white">{access.user}</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{access.user}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {access.action === "view" ? "مشاهده" : "دانلود"}
                   </p>
@@ -224,25 +263,36 @@ const FileDetails = () => {
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   {format(access.date, "HH:mm - yyyy/MM/dd")}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* تاریخچه نسخه‌ها */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+        border border-gray-200/30 dark:border-gray-700/30 shadow-lg p-6"
+      >
+        <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 
+        bg-clip-text text-transparent mb-4">
           تاریخچه نسخه‌ها
         </h2>
         <div className="space-y-4">
           {file.versions.map((version, index) => (
-            <div
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 + index * 0.1 }}
               key={index}
-              className="flex items-start justify-between border-b border-gray-200 dark:border-gray-700 last:border-0 pb-4"
+              className="flex items-start justify-between p-4 border-b border-gray-200/30 
+              dark:border-gray-700/30 last:border-0"
             >
               <div>
-                <p className="text-gray-900 dark:text-white font-medium">
+                <p className="font-medium bg-gradient-to-r from-purple-600 to-blue-600 
+                bg-clip-text text-transparent">
                   نسخه {version.version}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -256,41 +306,59 @@ const FileDetails = () => {
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   {format(version.date, "yyyy/MM/dd")}
                 </p>
-                <button className="text-primary-600 hover:text-primary-700 text-sm mt-1">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="text-purple-600 hover:text-purple-700 dark:text-purple-400 
+                  dark:hover:text-purple-300 text-sm mt-1 transition-colors duration-300"
+                >
                   دانلود این نسخه
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Modal تایید حذف */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl p-6 max-w-md w-full mx-4"
+          >
+            <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 
+            bg-clip-text text-transparent mb-4">
               تایید حذف فایل
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               آیا از حذف این فایل اطمینان دارید؟ این عمل غیرقابل بازگشت است.
             </p>
             <div className="flex justify-end space-x-4 space-x-reverse">
-              <button
-                className="btn-secondary"
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-xl"
                 onClick={() => setShowDeleteConfirm(false)}
               >
-                انصراف
-              </button>
-              <button
-                className="btn-primary bg-red-600 hover:bg-red-700"
+                انصراف</motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 bg-red-500 text-white rounded-xl shadow-lg shadow-red-500/30 
+                hover:shadow-red-500/40 transition-all duration-300"
                 onClick={handleDelete}
               >
                 حذف فایل
-              </button>
+              </motion.button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );
