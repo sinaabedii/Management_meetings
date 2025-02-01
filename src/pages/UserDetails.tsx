@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   EnvelopeIcon,
@@ -6,9 +5,17 @@ import {
   BuildingOfficeIcon,
   CalendarIcon,
   ClockIcon,
-  DocumentCheckIcon
+  DocumentCheckIcon,
+  ArrowRightIcon
 } from '@heroicons/react/24/outline';
-import { format } from 'date-fns';
+import { motion } from 'framer-motion';
+
+interface StatCardProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  title: string;
+  value: number;
+  color: string;
+}
 
 const MOCK_USER = {
   id: 1,
@@ -52,127 +59,162 @@ const MOCK_USER = {
   ]
 };
 
+
+const StatCard : React.FC<StatCardProps> = ({ icon: Icon, title, value, color }) => (
+  <motion.div
+    whileHover={{ scale: 1.02 }}
+    className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6
+    border border-gray-200/30 dark:border-gray-700/30 relative overflow-hidden
+    hover:shadow-xl transition-all duration-300"
+  >
+    <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${color}`} />
+    <div className="flex items-center">
+      <div className={`p-3 rounded-xl bg-gradient-to-br ${color} bg-opacity-10`}>
+        <Icon className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+      </div>
+      <div className="mr-4">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {title}
+        </p>
+        <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          {value}
+        </p>
+      </div>
+    </div>
+  </motion.div>
+);
+
 const UserDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  // در نسخه واقعی، اطلاعات کاربر از API دریافت می‌شود
   const user = MOCK_USER;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <button
+    <div className="container mx-auto px-4 ">
+      <motion.button
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
         onClick={() => navigate('/users')}
-        className="mb-6 flex items-center text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+        className="mb-6 flex items-center text-gray-600 hover:text-purple-600 dark:text-gray-400 
+        dark:hover:text-purple-400 transition-colors duration-300"
       >
-        <span className="ml-2">←</span>
+        <ArrowRightIcon className="h-5 w-5 ml-2" />
         بازگشت به لیست کاربران
-      </button>
+      </motion.button>
 
       {/* اطلاعات اصلی کاربر */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6 mb-6
+        border border-gray-200/30 dark:border-gray-700/30 relative overflow-hidden"
+      >
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500/50 to-blue-500/50" />
         <div className="flex items-start justify-between">
           <div className="flex items-center">
             <img
               src={user.avatar}
               alt={user.name}
-              className="h-24 w-24 rounded-full"
+              className="h-24 w-24 rounded-full ring-4 ring-purple-500/20"
             />
             <div className="mr-6">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 {user.name}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">
                 {user.role}
               </p>
-              <span
-                className={`mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              <motion.span
+                whileHover={{ scale: 1.05 }}
+                className={`mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                ${
                   user.status === 'active'
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                    ? 'bg-green-100/80 text-green-800 dark:bg-green-900/80 dark:text-green-300'
+                    : 'bg-red-100/80 text-red-800 dark:bg-red-900/80 dark:text-red-300'
                 }`}
               >
                 {user.status === 'active' ? 'فعال' : 'غیرفعال'}
-              </span>
+              </motion.span>
             </div>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => navigate(`/users/${id}/edit`)}
-            className="btn-primary"
+            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl
+            shadow-lg shadow-purple-500/30 hover:shadow-blue-500/40 transition-all duration-300"
           >
             ویرایش پروفایل
-          </button>
+          </motion.button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div className="flex items-center">
-            <EnvelopeIcon className="h-5 w-5 text-gray-400 ml-2" />
+          <motion.div 
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center p-3 rounded-xl bg-purple-50/50 dark:bg-purple-900/20"
+          >
+            <EnvelopeIcon className="h-5 w-5 text-purple-500 ml-2" />
             <span className="text-gray-600 dark:text-gray-300">{user.email}</span>
-          </div>
-          <div className="flex items-center">
-            <PhoneIcon className="h-5 w-5 text-gray-400 ml-2" />
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/20"
+          >
+            <PhoneIcon className="h-5 w-5 text-blue-500 ml-2" />
             <span className="text-gray-600 dark:text-gray-300">{user.phone}</span>
-          </div>
-          <div className="flex items-center">
-            <BuildingOfficeIcon className="h-5 w-5 text-gray-400 ml-2" />
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center p-3 rounded-xl bg-purple-50/50 dark:bg-purple-900/20"
+          >
+            <BuildingOfficeIcon className="h-5 w-5 text-purple-500 ml-2" />
             <span className="text-gray-600 dark:text-gray-300">{user.department}</span>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* آمار کاربر */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <CalendarIcon className="h-10 w-10 text-blue-500" />
-            <div className="mr-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                جلسات شرکت کرده
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {user.meetingsAttended}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <ClockIcon className="h-10 w-10 text-green-500" />
-            <div className="mr-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                جلسات برگزار کرده
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {user.meetingsOrganized}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <DocumentCheckIcon className="h-10 w-10 text-purple-500" />
-            <div className="mr-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                مصوبات تکمیل شده
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {user.completedTasks}
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <StatCard
+          icon={CalendarIcon}
+          title="جلسات شرکت کرده"
+          value={user.meetingsAttended}
+          color="from-purple-500/50 to-blue-500/50"
+        />
+        <StatCard
+          icon={ClockIcon}
+          title="جلسات برگزار کرده"
+          value={user.meetingsOrganized}
+          color="from-blue-500/50 to-green-500/50"
+        />
+        <StatCard
+          icon={DocumentCheckIcon}
+          title="مصوبات تکمیل شده"
+          value={user.completedTasks}
+          color="from-green-500/50 to-teal-500/50"
+        />
       </div>
 
       {/* جلسات اخیر و فعالیت‌ها */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+        {/* جلسات اخیر */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6
+          border border-gray-200/30 dark:border-gray-700/30 relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500/50 to-blue-500/50" />
+          <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
             جلسات اخیر
           </h2>
           <div className="space-y-4">
             {user.recentMeetings.map((meeting) => (
-              <div
+              <motion.div
+                whileHover={{ scale: 1.02 }}
                 key={meeting.id}
-                className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4"
+                className="flex items-center justify-between border-b border-gray-200/30 dark:border-gray-700/30 pb-4"
               >
                 <div>
                   <p className="text-gray-900 dark:text-white font-medium">
@@ -183,28 +225,37 @@ const UserDetails = () => {
                   </p>
                 </div>
                 <span
-                  className={`px-2 py-1 text-xs font-medium rounded ${
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${
                     meeting.status === 'completed'
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                      : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                      ? 'bg-green-100/80 text-green-800 dark:bg-green-900/80 dark:text-green-300'
+                      : 'bg-blue-100/80 text-blue-800 dark:bg-blue-900/80 dark:text-blue-300'
                   }`}
                 >
                   {meeting.status === 'completed' ? 'برگزار شده' : 'برنامه‌ریزی شده'}
                 </span>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+        {/* فعالیت‌های اخیر */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-6
+          border border-gray-200/30 dark:border-gray-700/30 relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/50 to-purple-500/50" />
+          <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
             فعالیت‌های اخیر
           </h2>
           <div className="space-y-4">
             {user.recentActivities.map((activity, index) => (
-              <div
+              <motion.div
+                whileHover={{ scale: 1.02 }}
                 key={index}
-                className="flex items-start border-b border-gray-200 dark:border-gray-700 pb-4"
+                className="flex items-start border-b border-gray-200/30 dark:border-gray-700/30 pb-4"
               >
                 <div className="flex-1">
                   <p className="text-gray-900 dark:text-white">
@@ -214,10 +265,10 @@ const UserDetails = () => {
                     {activity.date}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   PhoneIcon,
   BuildingOfficeIcon,
 } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
 import UserModal from "../components/users/UserModal";
 import { useNavigate } from "react-router-dom";
 
@@ -114,37 +115,57 @@ const Users = () => {
     });
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+    <div className="container mx-auto px-4 ">
+      {/* Header Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex justify-between items-center mb-6"
+      >
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
           مدیریت کاربران
         </h1>
-        <button
-          className="btn-primary flex items-center"
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => {
             setEditingUser(null);
             setShowModal(true);
           }}
+          className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl
+          shadow-lg shadow-purple-500/30 hover:shadow-blue-500/40 transition-all duration-300
+          flex items-center gap-2"
         >
-          <PlusIcon className="h-5 w-5 ml-2" />
+          <PlusIcon className="h-5 w-5" />
           افزودن کاربر جدید
-        </button>
-      </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+        </motion.button>
+      </motion.div>
+
+      {/* Search Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+        border border-gray-200/30 dark:border-gray-700/30 shadow-lg p-6 mb-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <MagnifyingGlassIcon className="h-5 w-5 absolute right-3 top-3 text-gray-400" />
             <input
               type="text"
               placeholder="جستجو..."
-              className="input-primary pr-10 w-full"
+              className="w-full pr-10 px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 
+              backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
+              focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div>
             <select
-              className="input-primary w-full"
+              className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 
+              backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
+              focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
             >
@@ -157,7 +178,9 @@ const Users = () => {
           </div>
           <div>
             <select
-              className="input-primary w-full"
+              className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 
+              backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
+              focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
@@ -167,23 +190,35 @@ const Users = () => {
             </select>
           </div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Users Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredUsers.map((user) => (
-          <div
+        {filteredUsers.map((user, index) => (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
             key={user.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow"
+            className="group bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl 
+            border border-gray-200/30 dark:border-gray-700/30 shadow-lg
+            hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300
+            relative overflow-hidden"
           >
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500/50 to-blue-500/50 
+            transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100" />
+            
             <div className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex items-center">
                   <img
                     src={user.avatar}
                     alt={user.name}
-                    className="h-12 w-12 rounded-full"
+                    className="h-12 w-12 rounded-full ring-2 ring-purple-500/20"
                   />
                   <div className="mr-4">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 
+                    bg-clip-text text-transparent">
                       {user.name}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -194,34 +229,39 @@ const Users = () => {
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
                     user.status === "active"
-                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                      ? "bg-green-100/80 text-green-800 dark:bg-green-900/80 dark:text-green-300"
+                      : "bg-red-100/80 text-red-800 dark:bg-red-900/80 dark:text-red-300"
                   }`}
                 >
                   {user.status === "active" ? "فعال" : "غیرفعال"}
                 </span>
               </div>
+
               <div className="mt-4 space-y-2">
-                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                <div className="flex items-center text-gray-600 dark:text-gray-400 hover:text-purple-600 
+                dark:hover:text-purple-400 transition-colors duration-300">
                   <EnvelopeIcon className="h-5 w-5 ml-2" />
                   <span className="text-sm">{user.email}</span>
                 </div>
-                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                <div className="flex items-center text-gray-600 dark:text-gray-400 hover:text-purple-600 
+                dark:hover:text-purple-400 transition-colors duration-300">
                   <PhoneIcon className="h-5 w-5 ml-2" />
                   <span className="text-sm">{user.phone}</span>
                 </div>
-                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                <div className="flex items-center text-gray-600 dark:text-gray-400 hover:text-purple-600 
+                dark:hover:text-purple-400 transition-colors duration-300">
                   <BuildingOfficeIcon className="h-5 w-5 ml-2" />
                   <span className="text-sm">{user.department}</span>
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-4 border-t pt-4">
-                <div className="text-center">
+              <div className="mt-4 grid grid-cols-3 gap-4 border-t border-gray-200/30 dark:border-gray-700/30 pt-4">
+                <div className="text-center group">
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     جلسات
                   </p>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <p className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 
+                  bg-clip-text text-transparent">
                     {user.meetingsAttended}
                   </p>
                 </div>
@@ -229,7 +269,8 @@ const Users = () => {
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     برگزار شده
                   </p>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <p className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 
+                  bg-clip-text text-transparent">
                     {user.meetingsOrganized}
                   </p>
                 </div>
@@ -237,18 +278,21 @@ const Users = () => {
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     وظایف
                   </p>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <p className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 
+                  bg-clip-text text-transparent">
                     {user.completedTasks}
                   </p>
                 </div>
               </div>
+
               <div className="mt-4 flex justify-between items-center">
                 <span className="text-sm text-gray-500 dark:text-gray-400">
                   آخرین فعالیت: {user.lastActive}
                 </span>
                 <div className="flex gap-2">
                   <button
-                    className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                    className="text-purple-600 hover:text-purple-700 dark:text-purple-400 
+                    dark:hover:text-purple-300 transition-colors duration-300 text-sm font-medium"
                     onClick={() => {
                       setEditingUser(user);
                       setShowModal(true);
@@ -256,15 +300,20 @@ const Users = () => {
                   >
                     ویرایش
                   </button>
-                  <button onClick={() => navigate(`/users/${user.id}`)} className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+                  <button 
+                    onClick={() => navigate(`/users/${user.id}`)} 
+                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 
+                    dark:hover:text-blue-300 transition-colors duration-300 text-sm font-medium"
+                  >
                     مشاهده پروفایل
                   </button>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
+
       <UserModal
         isOpen={showModal}
         onClose={() => {

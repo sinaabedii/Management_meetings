@@ -1,11 +1,11 @@
-import React, { Fragment, useState } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import { BellIcon } from '@heroicons/react/24/outline';
-import { format } from 'date-fns';
+import React, { Fragment, useState } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { BellIcon } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
 
 interface Notification {
   id: number;
-  type: 'meeting' | 'task' | 'system';
+  type: "meeting" | "task" | "system";
   title: string;
   message: string;
   date: Date;
@@ -16,34 +16,38 @@ interface Notification {
 const MOCK_NOTIFICATIONS: Notification[] = [
   {
     id: 1,
-    type: 'meeting',
-    title: 'جلسه جدید',
-    message: 'جلسه برنامه‌ریزی اسپرینت در ساعت 14:00 برگزار می‌شود',
+    type: "meeting",
+    title: "جلسه جدید",
+    message: "جلسه برنامه‌ریزی اسپرینت در ساعت 14:00 برگزار می‌شود",
     date: new Date(),
     read: false,
-    link: '/meetings/1'
+    link: "/meetings/1",
   },
   {
     id: 2,
-    type: 'task',
-    title: 'مهلت مصوبه',
+    type: "task",
+    title: "مهلت مصوبه",
     message: 'مهلت انجام مصوبه "تهیه مستندات" فردا به پایان می‌رسد',
     date: new Date(),
     read: false,
-    link: '/tasks/1'
+    link: "/tasks/1",
   },
   // ... سایر اعلان‌ها
 ];
 
-const NotificationItem: React.FC<{ notification: Notification }> = ({ notification }) => (
-  <div className={`p-4 backdrop-blur-sm transition-all duration-200 hover:bg-white/50 dark:hover:bg-gray-800/50 ${
-    notification.read 
-      ? 'bg-white/30 dark:bg-gray-800/30' 
-      : 'bg-gradient-to-r from-blue-50/90 to-purple-50/90 dark:from-blue-900/30 dark:to-purple-900/30'
-  }`}>
+const NotificationItem: React.FC<{ notification: Notification }> = ({
+  notification,
+}) => (
+  <div
+    className={`p-4 backdrop-blur-sm transition-all duration-200 hover:bg-white/50 dark:hover:bg-gray-800/50 ${
+      notification.read
+        ? "bg-white/30 dark:bg-gray-800/30"
+        : "bg-gradient-to-r from-blue-50/90 to-purple-50/90 dark:from-blue-900/30 dark:to-purple-900/30"
+    }`}
+  >
     <div className="flex items-start">
       <div className="flex-shrink-0">
-        {notification.type === 'meeting' && (
+        {notification.type === "meeting" && (
           <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-800 dark:to-purple-800 flex items-center justify-center shadow-sm transition-transform duration-200 hover:scale-105">
             <BellIcon className="h-5 w-5 text-blue-600 dark:text-blue-300" />
           </div>
@@ -57,7 +61,7 @@ const NotificationItem: React.FC<{ notification: Notification }> = ({ notificati
           {notification.message}
         </p>
         <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-          {format(notification.date, 'HH:mm - yyyy/MM/dd')}
+          {format(notification.date, "HH:mm - yyyy/MM/dd")}
         </div>
       </div>
     </div>
@@ -65,16 +69,16 @@ const NotificationItem: React.FC<{ notification: Notification }> = ({ notificati
 );
 
 const NotificationsDropdown = () => {
-  const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const [notifications, setNotifications] =
+    useState<Notification[]>(MOCK_NOTIFICATIONS);
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
+    setNotifications(notifications.map((n) => ({ ...n, read: true })));
   };
 
   return (
     <Menu as="div" className="relative inline-block text-right">
-      {/* Notification Button */}
       <div>
         <Menu.Button className="relative rounded-xl bg-white/80 dark:bg-gray-800/80 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 backdrop-blur-sm">
           <span className="sr-only">اعلان‌ها</span>
@@ -96,11 +100,13 @@ const NotificationsDropdown = () => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute left-0 z-50 mt-2 w-96 origin-top-left rounded-2xl bg-white/80 dark:bg-gray-800/80 shadow-xl ring-1 ring-black/5 focus:outline-none backdrop-blur-lg transform transition-all duration-200 
+        <Menu.Items
+          className="absolute left-0 z-50 mt-2 w-96 origin-top-left rounded-2xl bg-white/80 dark:bg-gray-800/80 shadow-xl ring-1 ring-black/5 focus:outline-none backdrop-blur-lg transform transition-all duration-200 
           sm:w-96 
           xs:w-screen xs:left-0 xs:right-0 xs:mx-4
           md:left-auto md:right-auto md:mx-0
-          max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:top-16">
+          max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:top-16"
+        >
           {/* Header */}
           <div className="p-4 border-b border-gray-200/50 dark:border-gray-700/50">
             <div className="flex items-center justify-between">

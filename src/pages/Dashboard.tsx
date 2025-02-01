@@ -25,21 +25,18 @@ const stats = [
   { name: "مصوبات انجام شده", value: "85%", icon: CheckCircleIcon },
 ];
 
-// داده‌های نمودار دایره‌ای مصوبات
 const approvalData = [
   { name: "انجام شده", value: 85, fill: "#10B981" },
   { name: "در حال انجام", value: 10, fill: "#F59E0B" },
   { name: "تاخیر دار", value: 5, fill: "#EF4444" },
 ];
 
-// داده‌های نمودار دایره‌ای شرکت‌کنندگان
 const participantsData = [
   { name: "مدیران", value: 30, fill: "#3B82F6" },
   { name: "کارشناسان", value: 45, fill: "#8B5CF6" },
   { name: "مشتریان", value: 25, fill: "#EC4899" },
 ];
 
-// داده‌های نمودار RadialBar
 const meetingProgressData = [
   { name: "جلسات هفتگی", value: 90, fill: "#10B981" },
   { name: "جلسات ماهانه", value: 75, fill: "#3B82F6" },
@@ -76,9 +73,9 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen">
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white overflow-hidden rounded-xl">
-        <div className="max-w-7xl flex flex-col lg:flex-row  mx-auto space-y-6 lg:space-y-0">
+        <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 justify-between">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center px-4 sm:px-6 lg:px-8 py-12">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -89,7 +86,7 @@ const Dashboard = () => {
               </p>
             </div>
           </div>
-          <div className="flex justify-center lg:w-1/2 lg:px-0">
+          <div className="flex justify-center lg:w-1/3 ">
             <div className="w-full max-w-[400px] h-[300px] sm:h-[350px] md:h-[400px] overflow-hidden bg-white/10">
               <video
                 className="w-full h-full object-cover p-0"
@@ -106,7 +103,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
           {stats.map((item, index) => (
             <Card
@@ -265,11 +262,17 @@ const Dashboard = () => {
               <div
                 key={meeting.time}
                 className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 backdrop-blur-lg rounded-xl transition-all duration-300 hover:translate-x-2
-                  ${index % 2 === 0 ? 'bg-blue-50/50 dark:bg-blue-900/20' : 'bg-purple-50/50 dark:bg-purple-900/20'}
+                  ${
+                    index % 2 === 0
+                      ? "bg-blue-50/50 dark:bg-blue-900/20"
+                      : "bg-purple-50/50 dark:bg-purple-900/20"
+                  }
                 `}
               >
                 <div className="mb-2 sm:mb-0">
-                  <p className="text-sm sm:text-base font-medium">{meeting.title}</p>
+                  <p className="text-sm sm:text-base font-medium">
+                    {meeting.title}
+                  </p>
                   <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 gap-1 sm:gap-2">
                     <span className="flex items-center">
                       <ClockIcon className="h-4 w-4 ml-1" />

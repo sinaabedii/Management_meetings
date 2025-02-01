@@ -1,0 +1,139 @@
+.calendar-container {
+    @apply p-6;
+  }
+  
+  .fc {
+    @apply font-sans; /* یا هر فونت دیگه‌ای که در تیلویند تعریف شده */
+  }
+  
+  .fc-toolbar-title {
+    @apply text-xl md:text-2xl font-bold text-gray-800 dark:text-white !important;
+  }
+  
+  .fc-button-primary {
+    @apply bg-gradient-to-r from-indigo-500 to-purple-500 border-0 
+    shadow-lg shadow-indigo-500/30 hover:shadow-purple-500/40 
+    transition-all duration-300 !important;
+  }
+  
+  .fc-button-primary:disabled {
+    @apply opacity-50 cursor-not-allowed !important;
+  }
+  
+  .fc-button-primary:not(:disabled):hover {
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 transform 
+    scale-105 !important;
+  }
+  
+  .fc-day {
+    @apply transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 !important;
+  }
+  
+  .fc-day-today {
+    @apply bg-indigo-50 dark:bg-indigo-900/20 !important;
+  }
+  
+  .fc-event {
+    @apply rounded-lg shadow-md transition-transform duration-200 
+    hover:scale-[1.02] !important;
+  }
+  
+  .event-content {
+    @apply p-1 overflow-hidden;
+  }
+  
+  .event-title {
+    @apply font-bold text-sm whitespace-nowrap overflow-hidden text-ellipsis;
+  }
+  
+  .event-location {
+    @apply text-xs mt-1 opacity-75 flex items-center gap-1;
+  }
+  
+  .location-icon {
+    @apply text-xs;
+  }
+  
+  /* اضافه کردن استایل‌های جذاب‌تر برای رویدادها */
+  .fc-event-main {
+    @apply px-2 py-1;
+  }
+  
+  .fc-event-title {
+    @apply font-medium;
+  }
+  
+  .fc-event:hover {
+    @apply shadow-lg;
+  }
+  
+  /* استایل‌های هدر تقویم */
+  .fc-header-toolbar {
+    @apply mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4;
+  }
+  
+  .fc-toolbar-chunk {
+    @apply flex items-center gap-2;
+  }
+  
+  /* استایل برای روزهای هفته */
+  .fc-col-header-cell {
+    @apply bg-gray-50 dark:bg-gray-700 py-3;
+  }
+  
+  .fc-col-header-cell-cushion {
+    @apply font-bold text-gray-700 dark:text-gray-300;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .fc-toolbar {
+      @apply flex-col gap-2 !important;
+    }
+    
+    .fc-toolbar-chunk {
+      @apply flex justify-center !important;
+    }
+  
+    .fc-header-toolbar {
+      @apply mb-4 !important;
+    }
+  
+    .fc-toolbar-title {
+      @apply text-lg !important;
+    }
+  
+    .fc-button {
+      @apply text-sm py-1 px-2 !important;
+    }
+  
+    .fc-toolbar-chunk:first-child {
+      @apply order-2;
+    }
+    
+    .fc-toolbar-chunk:nth-child(2) {
+      @apply order-1;
+    }
+    
+    .fc-toolbar-chunk:last-child {
+      @apply order-3;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .calendar-container {
+      @apply p-2;
+    }
+  
+    .fc-toolbar-title {
+      @apply text-base !important;
+    }
+  
+    .fc-view-harness {
+      @apply min-h-[400px] !important;
+    }
+  
+    .fc-header-toolbar {
+      @apply p-2;
+    }
+  }

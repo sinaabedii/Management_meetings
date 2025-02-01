@@ -1,8 +1,9 @@
-import React from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment } from "react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useForm } from "react-hook-form";
+import { motion } from "framer-motion";
 
 interface UserFormData {
   name: string;
@@ -10,7 +11,7 @@ interface UserFormData {
   phone: string;
   role: string;
   department: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   password?: string;
   confirmPassword?: string;
 }
@@ -26,7 +27,7 @@ interface UserModalProps {
     phone: string;
     role: string;
     department: string;
-    status: 'active' | 'inactive';
+    status: "active" | "inactive";
   };
 }
 
@@ -34,32 +35,49 @@ const UserModal: React.FC<UserModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  editUser
+  editUser,
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-    reset
+    reset,
   } = useForm<UserFormData>({
     defaultValues: editUser || {
-      name: '',
-      email: '',
-      phone: '',
-      role: '',
-      department: '',
-      status: 'active'
-    }
+      name: "",
+      email: "",
+      phone: "",
+      role: "",
+      department: "",
+      status: "active",
+    },
   });
 
-  const password = watch('password');
+  const password = watch("password");
 
   const onFormSubmit = (data: UserFormData) => {
     onSubmit(data);
     reset();
     onClose();
   };
+
+  const inputClasses =
+    "w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm \
+    border border-gray-200/30 dark:border-gray-700/30 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 \
+    outline-none transition-all duration-300";
+
+  const labelClasses =
+    "block text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-1";
+
+  const buttonBaseClasses =
+    "px-4 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2";
+
+  const primaryButtonClasses = `${buttonBaseClasses} bg-gradient-to-r from-purple-500 to-blue-500 text-white \
+    shadow-lg shadow-purple-500/30 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98]`;
+
+  const secondaryButtonClasses = `${buttonBaseClasses} bg-white/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 \
+    border border-gray-200/30 dark:border-gray-700/30 hover:bg-gray-50/50 dark:hover:bg-gray-700/50`;
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -73,7 +91,7 @@ const UserModal: React.FC<UserModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -87,88 +105,100 @@ const UserModal: React.FC<UserModalProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-right align-middle shadow-xl transition-all">
+              <Dialog.Panel
+                className="w-full max-w-md transform overflow-hidden rounded-2xl 
+                bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-6 text-right align-middle shadow-xl 
+                transition-all relative border border-gray-200/30 dark:border-gray-700/30"
+              >
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500/50 to-blue-500/50" />
+
                 <Dialog.Title
                   as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900 dark:text-white flex justify-between items-center"
+                  className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text 
+                  text-transparent flex justify-between items-center mb-6"
                 >
-                  {editUser ? 'ویرایش کاربر' : 'افزودن کاربر جدید'}
-                  <button
+                  {editUser ? "ویرایش کاربر" : "افزودن کاربر جدید"}
+                  <motion.button
+                    whileHover={{ scale: 1.1, rotate: 90 }}
+                    whileTap={{ scale: 0.9 }}
                     type="button"
-                    className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                    className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors"
                     onClick={onClose}
                   >
                     <XMarkIcon className="h-6 w-6" />
-                  </button>
+                  </motion.button>
                 </Dialog.Title>
 
-                <form onSubmit={handleSubmit(onFormSubmit)} className="mt-4">
+                <form
+                  onSubmit={handleSubmit(onFormSubmit)}
+                  className="space-y-4"
+                >
                   <div className="space-y-4">
                     {/* نام و نام خانوادگی */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        نام و نام خانوادگی
-                      </label>
+                      <label className={labelClasses}>نام و نام خانوادگی</label>
                       <input
                         type="text"
-                        className="input-primary mt-1 w-full"
-                        {...register('name', { required: 'نام و نام خانوادگی الزامی است' })}
+                        className={inputClasses}
+                        {...register("name", {
+                          required: "نام و نام خانوادگی الزامی است",
+                        })}
                       />
                       {errors.name && (
-                        <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.name.message}
+                        </p>
                       )}
                     </div>
 
                     {/* ایمیل */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        ایمیل
-                      </label>
+                      <label className={labelClasses}>ایمیل</label>
                       <input
                         type="email"
-                        className="input-primary mt-1 w-full"
-                        {...register('email', {
-                          required: 'ایمیل الزامی است',
+                        className={inputClasses}
+                        {...register("email", {
+                          required: "ایمیل الزامی است",
                           pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: 'آدرس ایمیل نامعتبر است'
-                          }
+                            message: "آدرس ایمیل نامعتبر است",
+                          },
                         })}
                       />
                       {errors.email && (
-                        <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.email.message}
+                        </p>
                       )}
                     </div>
 
                     {/* شماره تماس */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        شماره تماس
-                      </label>
+                      <label className={labelClasses}>شماره تماس</label>
                       <input
                         type="tel"
-                        className="input-primary mt-1 w-full"
-                        {...register('phone', {
-                          required: 'شماره تماس الزامی است',
+                        className={inputClasses}
+                        {...register("phone", {
+                          required: "شماره تماس الزامی است",
                           pattern: {
                             value: /^[0-9]{11}$/,
-                            message: 'شماره تماس باید 11 رقم باشد'
-                          }
+                            message: "شماره تماس باید 11 رقم باشد",
+                          },
                         })}
                       />
                       {errors.phone && (
-                        <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.phone.message}
+                        </p>
                       )}
                     </div>
 
                     {/* نقش */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        نقش
-                      </label>
+                      <label className={labelClasses}>نقش</label>
                       <select
-                        className="input-primary mt-1 w-full"
-                        {...register('role', { required: 'نقش الزامی است' })}
+                        className={inputClasses}
+                        {...register("role", { required: "نقش الزامی است" })}
                       >
                         <option value="">انتخاب نقش</option>
                         <option value="admin">مدیر سیستم</option>
@@ -176,18 +206,20 @@ const UserModal: React.FC<UserModalProps> = ({
                         <option value="user">کاربر عادی</option>
                       </select>
                       {errors.role && (
-                        <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.role.message}
+                        </p>
                       )}
                     </div>
 
                     {/* دپارتمان */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        دپارتمان
-                      </label>
+                      <label className={labelClasses}>دپارتمان</label>
                       <select
-                        className="input-primary mt-1 w-full"
-                        {...register('department', { required: 'دپارتمان الزامی است' })}
+                        className={inputClasses}
+                        {...register("department", {
+                          required: "دپارتمان الزامی است",
+                        })}
                       >
                         <option value="">انتخاب دپارتمان</option>
                         <option value="مدیریت">مدیریت</option>
@@ -196,19 +228,16 @@ const UserModal: React.FC<UserModalProps> = ({
                         <option value="مارکتینگ">مارکتینگ</option>
                       </select>
                       {errors.department && (
-                        <p className="mt-1 text-sm text-red-600">{errors.department.message}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.department.message}
+                        </p>
                       )}
                     </div>
 
                     {/* وضعیت */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        وضعیت
-                      </label>
-                      <select
-                        className="input-primary mt-1 w-full"
-                        {...register('status')}
-                      >
+                      <label className={labelClasses}>وضعیت</label>
+                      <select className={inputClasses} {...register("status")}>
                         <option value="active">فعال</option>
                         <option value="inactive">غیرفعال</option>
                       </select>
@@ -217,13 +246,13 @@ const UserModal: React.FC<UserModalProps> = ({
                     {/* رمز عبور - فقط برای کاربر جدید */}
                     {!editUser && (
                       <>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {/* <div>
+                          <label className={labelClasses}>
                             رمز عبور
                           </label>
                           <input
                             type="password"
-                            className="input-primary mt-1 w-full"
+                            className={inputClasses}
                             {...register('password', {
                               required: 'رمز عبور الزامی است',
                               minLength: {
@@ -233,17 +262,17 @@ const UserModal: React.FC<UserModalProps> = ({
                             })}
                           />
                           {errors.password && (
-                            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                            <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
                           )}
-                        </div>
+                        </div> */}
 
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {/* <div>
+                          <label className={labelClasses}>
                             تکرار رمز عبور
                           </label>
                           <input
                             type="password"
-                            className="input-primary mt-1 w-full"
+                            className={inputClasses}
                             {...register('confirmPassword', {
                               required: 'تکرار رمز عبور الزامی است',
                               validate: value =>
@@ -251,29 +280,33 @@ const UserModal: React.FC<UserModalProps> = ({
                             })}
                           />
                           {errors.confirmPassword && (
-                            <p className="mt-1 text-sm text-red-600">
+                            <p className="mt-1 text-sm text-red-500">
                               {errors.confirmPassword.message}
                             </p>
                           )}
-                        </div>
+                        </div> */}
                       </>
                     )}
                   </div>
 
-                  <div className="mt-6 flex justify-end space-x-4 space-x-reverse">
-                    <button
+                  <div className="mt-8 flex justify-end space-x-4 space-x-reverse">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       type="button"
-                      className="btn-secondary"
+                      className={secondaryButtonClasses}
                       onClick={onClose}
                     >
                       انصراف
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       type="submit"
-                      className="btn-primary"
+                      className={primaryButtonClasses}
                     >
-                      {editUser ? 'ویرایش' : 'افزودن'}
-                    </button>
+                      {editUser ? "ویرایش" : "افزودن"}
+                    </motion.button>
                   </div>
                 </form>
               </Dialog.Panel>
