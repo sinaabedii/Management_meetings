@@ -96,7 +96,7 @@ export const MainLayout = () => {
            dark:from-gray-800/95 dark:via-gray-800/90 dark:to-gray-800/95 shadow-[0_0_50px_0_rgba(192,132,252,0.2)]
            border-l border-purple-100/20 dark:border-purple-900/20"
         >
-          <div className="mx-auto h-14 w-16 relative group mt-4">
+          <div className="mx-auto h-12 w-20 relative group mt-2">
             <div
               className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl transform rotate-3 
             transition-all duration-700 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-lg group-hover:shadow-purple-500/30"

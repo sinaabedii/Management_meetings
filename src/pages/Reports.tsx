@@ -16,7 +16,6 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 import { format, subMonths } from "date-fns-jalali";
-import StatsCards from "../components/reports/StatsCards";
 import ReportFilters from "../components/reports/ReportFilters";
 import {
   MeetingStats,
@@ -26,9 +25,7 @@ import {
   DepartmentType,
   MeetingMetrics,
 } from "../types/report";
-import AdvancedFilters, {
-  AdvancedFilterState,
-} from "../components/reports/AdvancedFilters";
+import AdvancedFilters from "../components/reports/AdvancedFilters";
 import AdvancedCharts from "../components/reports/AdvancedCharts";
 import StatisticalAnalysis from "../components/reports/StatisticalAnalysis";
 import { ChartBarIcon, ChartPieIcon } from "lucide-react";
@@ -283,8 +280,6 @@ const Reports = () => {
           onDateRangeChange={handleDateRangeChange}
           onDepartmentChange={handleDepartmentChange}
         />
-
-        <StatsCards metrics={metrics} />
         <AdvancedFilters
           onFilterChange={(filters: AdvancedFilterState) => {
             console.log("Advanced filters changed:", filters);
@@ -637,9 +632,6 @@ const Reports = () => {
           </motion.div>
         </div>
         <div className="mt-8">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            تحلیل‌های آماری پیشرفته
-          </h3>
           <StatisticalAnalysis data={data} />
         </div>
       </div>

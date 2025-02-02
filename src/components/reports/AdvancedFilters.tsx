@@ -16,8 +16,6 @@ interface AdvancedFiltersProps {
   onFilterChange: (filters: AdvancedFilterState) => void;
 }
 
-// ... (interfaces remain the same)
-
 const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({ onFilterChange }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState<AdvancedFilterState>({
@@ -160,6 +158,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({ onFilterChange }) => 
                 <select
                   className={inputClasses}
                   value={filters.duration}
+                  dir="ltr"
                   onChange={(e) => handleFilterChange('duration', e.target.value)}
                 >
                   <option value="">همه</option>
@@ -214,6 +213,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({ onFilterChange }) => 
                 <select
                   className={inputClasses}
                   value={filters.participantCount}
+                  dir="ltr"
                   onChange={(e) => handleFilterChange('participantCount', e.target.value)}
                 >
                   <option value="">همه</option>
@@ -232,6 +232,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({ onFilterChange }) => 
                 <select
                   className={inputClasses}
                   value={filters.completionRate}
+                  dir="ltr"
                   onChange={(e) => handleFilterChange('completionRate', e.target.value)}
                 >
                   <option value="">همه</option>

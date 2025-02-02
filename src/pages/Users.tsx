@@ -167,6 +167,7 @@ const Users = () => {
               backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
               focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={selectedDepartment}
+              dir="ltr"
               onChange={(e) => setSelectedDepartment(e.target.value)}
             >
               <option value="all">همه دپارتمان‌ها</option>
@@ -182,6 +183,7 @@ const Users = () => {
               backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
               focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={selectedStatus}
+              dir="ltr"
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
               <option value="all">همه وضعیت‌ها</option>

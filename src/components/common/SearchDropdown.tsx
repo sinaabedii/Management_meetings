@@ -104,7 +104,6 @@ const SearchDropdown = () => {
 
   useEffect(() => {
     if (query.length >= 2) {
-      // در حالت واقعی اینجا از API استفاده می‌شود
       const searchResults = mockSearch(query);
       setResults(searchResults);
       setIsOpen(true);

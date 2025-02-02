@@ -177,6 +177,7 @@ const Files = () => {
               backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
               focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={selectedType}
+              dir="ltr"
               onChange={(e) => setSelectedType(e.target.value)}
             >
               <option value="all">همه انواع فایل</option>
@@ -192,6 +193,7 @@ const Files = () => {
               backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30
               focus:ring-2 focus:ring-purple-500/20 outline-none transition-all duration-300"
               value={selectedMeeting}
+              dir="ltr"
               onChange={(e) => setSelectedMeeting(e.target.value)}
             >
               <option value="all">همه جلسات</option>

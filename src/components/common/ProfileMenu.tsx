@@ -88,7 +88,7 @@ const ProfileMenu = () => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items className="absolute left-0 z-50 mt-2 w-72 origin-top-left rounded-2xl 
-            bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl ring-1 ring-black/5 
+            bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-xl ring-1 ring-black/5 
             focus:outline-none border border-gray-200/30 dark:border-gray-700/30">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -118,7 +118,7 @@ const ProfileMenu = () => {
                 </div>
 
                 <div className="border-t border-gray-200/50 dark:border-gray-700/50 py-2">
-                  {menuItems.map((item, index) => (
+                  {menuItems.map((item) => (
                     <Menu.Item key={item.name}>
                       {({ active }) => (
                         <Link

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { User, AuthState } from '../types/auth';
+import { AuthState } from '../types/auth';
 
 const MOCK_USERS = [
   {
@@ -10,6 +10,25 @@ const MOCK_USERS = [
     role: 'admin',
     name: 'مدیر سیستم',
     department: 'مدیریت',
+    permissions: [
+      'manage_users',
+      'manage_meetings',
+      'view_reports',
+      'manage_files',
+      'manage_settings',
+      'create_meeting',
+      'edit_meeting',
+      'delete_meeting'
+    ]
+  },
+  {
+    id: 2,
+    username: 's.dadkhah',
+    password: 'dadkhah123', 
+    email: 'admin@example.com',
+    role: 'admin',
+    name: 'سهیل دادخواه',
+    department: 'بنیاد کسب و کار',
     permissions: [
       'manage_users',
       'manage_meetings',

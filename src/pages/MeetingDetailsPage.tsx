@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MeetingDetails from "../components/meetings/MeetingDetails";
-import CreateMeetingModal from "../components/meetings/CreateMeetingModal";
 import Resolutions from "../components/meetings/Resolutions";
 import { Meeting } from '../types/meeting';
 
@@ -110,13 +109,9 @@ const MeetingDetailsPage = () => {
     }
   };
 
-  const handleUpdate = (data: any) => {
-    console.log("Updating meeting:", id, data);
-    setShowEditModal(false);
-  };
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4">
       <div className="mb-6">
         <button
           onClick={() => navigate("/meetings")}
@@ -130,13 +125,6 @@ const MeetingDetailsPage = () => {
         meeting={meeting}
         onEdit={handleEdit}
         onDelete={handleDelete}
-      />
-
-      <CreateMeetingModal
-        isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSubmit={handleUpdate}
-        initialData={meeting}
       />
       <div className="mt-8">
         <Resolutions

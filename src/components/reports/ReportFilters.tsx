@@ -47,6 +47,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
             <select
               className={selectClasses}
               value={dateRange}
+              dir="ltr"
               onChange={(e) => onDateRangeChange(e.target.value as DateRangeType)}
             >
               <option value="last3months">3 ماه گذشته</option>
@@ -69,6 +70,7 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
             <select
               className={selectClasses}
               value={department}
+              dir="ltr"
               onChange={(e) => onDepartmentChange(e.target.value as DepartmentType)}
             >
               <option value="all">همه دپارتمان‌ها</option>

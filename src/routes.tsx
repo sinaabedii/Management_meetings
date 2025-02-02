@@ -14,7 +14,7 @@ const Users = lazy(() => import("./pages/Users"));
 const Reports = lazy(() => import("./pages/Reports"));
 const Files = lazy(() => import("./pages/Files"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Calendar = lazy(() => import("./pages/Calendar")); 
+const Calendar = lazy(() => import("./pages/Calendar"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const AppRoutes = () => {

@@ -84,7 +84,7 @@ const NotificationsDropdown = () => {
           <span className="sr-only">اعلان‌ها</span>
           <BellIcon className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white transform translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-red-500 to-pink-500 dark:from-red-600 dark:to-pink-600 rounded-full ring-2 ring-white dark:ring-gray-800 transition-transform duration-200 hover:scale-110">
+            <span className="absolute -top-0 -right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white transform translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-red-500 to-pink-500 dark:from-red-600 dark:to-pink-600 rounded-full ring-2 ring-white dark:ring-gray-800 transition-transform duration-200 hover:scale-110">
               {unreadCount}
             </span>
           )}
@@ -101,10 +101,10 @@ const NotificationsDropdown = () => {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items
-          className="absolute left-0 z-50 mt-2 w-96 origin-top-left rounded-2xl bg-white/80 dark:bg-gray-800/80 shadow-xl ring-1 ring-black/5 focus:outline-none backdrop-blur-lg transform transition-all duration-200 
+          className="absolute right-0 z-50 mt-2 w-82 origin-top-left rounded-2xl bg-white/80 dark:bg-gray-800/80 shadow-xl ring-1 ring-black/5 focus:outline-none backdrop-blur-lg transform transition-all duration-200 
           sm:w-96 
           xs:w-screen xs:left-0 xs:right-0 xs:mx-4
-          md:left-auto md:right-auto md:mx-0
+          md:left-2 md:right-auto md:mx-0
           max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:top-16"
         >
           {/* Header */}
