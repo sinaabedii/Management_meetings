@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   CalendarIcon,
   ChartBarIcon,
@@ -41,8 +41,10 @@ export const MainLayout = () => {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 
-      dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div
+      className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 
+      dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+    >
       {/* Mobile Sidebar */}
       <motion.div
         initial={{ x: 300 }}
@@ -51,25 +53,33 @@ export const MainLayout = () => {
         className="fixed inset-y-0 right-0 z-50 w-72 bg-white/90 rounded-l-2xl 
           backdrop-blur-xl dark:bg-gray-800/95 shadow-2xl md:hidden"
       >
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col rounded-2xl">
           {/* Mobile Header */}
-          <div className="relative mx-auto w-full p-4 border-b border-purple-100/20 
-            dark:border-purple-900/20">
+          <div
+            className="relative mx-auto w-full p-4 border-b border-purple-100/20 
+            dark:border-purple-900/20"
+          >
             <motion.div
               whileHover={{ scale: 1.02 }}
               className="relative h-12 rounded-xl bg-gradient-to-r from-purple-500/5 
                 to-blue-500/5 p-[1px] overflow-hidden group"
             >
               <div className="absolute inset-0">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 
-                  to-blue-600 animate-border-flow" />
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-600 
+                  to-blue-600 animate-border-flow"
+                />
               </div>
-              
-              <div className="relative h-full rounded-xl bg-white/80 dark:bg-gray-800/80 
-                backdrop-blur-sm flex items-center justify-center">
+
+              <div
+                className="relative h-full rounded-xl bg-white/80 dark:bg-gray-800/80 
+                backdrop-blur-sm flex items-center justify-center"
+              >
                 <div className="absolute inset-0 bg-grid-gray-500/[0.025] bg-[size:20px_20px]" />
-                <span className="text-xl font-bold bg-gradient-to-br from-gray-900 
-                  to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
+                <span
+                  className="text-xl font-bold bg-gradient-to-br from-gray-900 
+                  to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent"
+                >
                   پارسیم
                 </span>
               </div>
@@ -91,23 +101,31 @@ export const MainLayout = () => {
                   className="group relative flex items-center p-4 my-1 rounded-xl text-sm 
                     font-medium text-gray-700 dark:text-gray-200 overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50 
+                  <div
+                    className="absolute inset-0 bg-gradient-to-r from-purple-50 
                     to-blue-50 dark:from-purple-900/40 dark:to-blue-900/40 opacity-0 
-                    group-hover:opacity-100 transition-opacity duration-300" />
-                  
+                    group-hover:opacity-100 transition-opacity duration-300"
+                  />
+
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100">
-                    <div className="absolute inset-[-20px] bg-gradient-to-r 
-                      from-purple-500/10 to-blue-500/10 blur-3xl group-hover:animate-glow" />
+                    <div
+                      className="absolute inset-[-20px] bg-gradient-to-r 
+                      from-purple-500/10 to-blue-500/10 blur-3xl group-hover:animate-glow"
+                    />
                   </div>
 
-                  <item.icon className="relative h-5 w-5 ml-3 text-gray-400 
+                  <item.icon
+                    className="relative h-5 w-5 ml-3 text-gray-400 
                     group-hover:text-purple-600 dark:group-hover:text-purple-400 
                     transition-all duration-300 transform group-hover:scale-110 
-                    group-hover:rotate-6" />
+                    group-hover:rotate-6"
+                  />
 
-                  <span className="relative transform transition-all duration-300 
+                  <span
+                    className="relative transform transition-all duration-300 
                     group-hover:translate-x-1 group-hover:text-purple-600 
-                    dark:group-hover:text-purple-400">
+                    dark:group-hover:text-purple-400"
+                  >
                     {item.name}
                   </span>
                 </Link>
@@ -125,19 +143,26 @@ export const MainLayout = () => {
           className="flex flex-col flex-1 relative w-full"
         >
           {/* Background with animated gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/90 
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/90 
             to-white/95 dark:from-gray-800/95 dark:via-gray-800/90 dark:to-gray-800/95 
-            backdrop-blur-xl">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] 
-              from-purple-400/10 via-transparent to-transparent animate-pulse-slow" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] 
-              from-blue-400/10 via-transparent to-transparent animate-pulse-slow" />
+            backdrop-blur-xl"
+          >
+            <div
+              className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] 
+              from-purple-400/10 via-transparent to-transparent animate-pulse-slow"
+            />
+            <div
+              className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] 
+              from-blue-400/10 via-transparent to-transparent animate-pulse-slow"
+            />
           </div>
 
           {/* Content Container */}
-          <div className="relative flex flex-col flex-1 border-l border-purple-100/20 
-            dark:border-purple-900/20 shadow-[0_0_50px_0_rgba(192,132,252,0.2)]">
-            
+          <div
+            className="relative flex flex-col flex-1 border-l border-purple-100/20 
+            dark:border-purple-900/20 shadow-[0_0_50px_0_rgba(192,132,252,0.2)]"
+          >
             {/* Logo Section */}
             <div className="relative mx-auto w-full px-6 py-6">
               <motion.div
@@ -146,15 +171,21 @@ export const MainLayout = () => {
                   to-blue-500/5 p-[1px] overflow-hidden group"
               >
                 <div className="absolute inset-0">
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 
-                    to-blue-600 animate-border-flow" />
+                  <div
+                    className="absolute inset-0 bg-gradient-to-r from-purple-600 
+                    to-blue-600 animate-border-flow"
+                  />
                 </div>
-                
-                <div className="relative h-full rounded-2xl bg-white/80 dark:bg-gray-800/80 
-                  backdrop-blur-sm flex items-center justify-center">
+
+                <div
+                  className="relative h-full rounded-2xl bg-white/80 dark:bg-gray-800/80 
+                  backdrop-blur-sm flex items-center justify-center"
+                >
                   <div className="absolute inset-0 bg-grid-gray-500/[0.025] bg-[size:20px_20px]" />
-                  <span className="text-2xl font-bold bg-gradient-to-br from-gray-900 
-                    to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
+                  <span
+                    className="text-2xl font-bold bg-gradient-to-br from-gray-900 
+                    to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent"
+                  >
                     پارسیم
                   </span>
                 </div>
@@ -175,33 +206,51 @@ export const MainLayout = () => {
                     className="group relative flex items-center p-3 my-1 rounded-xl text-sm 
                       font-medium text-gray-700 dark:text-gray-200 overflow-hidden"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-50 
+                    <div
+                      className="absolute inset-0 bg-gradient-to-r from-purple-50 
                       to-blue-50 dark:from-purple-900/40 dark:to-blue-900/40 opacity-0 
-                      group-hover:opacity-100 transition-opacity duration-300" />
-                    
+                      group-hover:opacity-100 transition-opacity duration-300"
+                    />
+
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100">
-                      <div className="absolute inset-[-20px] bg-gradient-to-r 
-                        from-purple-500/10 to-blue-500/10 blur-3xl group-hover:animate-glow" />
+                      <div
+                        className="absolute inset-[-20px] bg-gradient-to-r 
+                        from-purple-500/10 to-blue-500/10 blur-3xl group-hover:animate-glow"
+                      />
                     </div>
 
-                    <item.icon className="relative h-5 w-5 ml-3 text-gray-400 
+                    <item.icon
+                      className="relative h-5 w-5 ml-3 text-gray-400 
                       group-hover:text-purple-600 dark:group-hover:text-purple-400 
                       transition-all duration-300 transform group-hover:scale-110 
-                      group-hover:rotate-6" />
+                      group-hover:rotate-6"
+                    />
 
-                    <span className="relative transform transition-all duration-300 
+                    <span
+                      className="relative transform transition-all duration-300 
                       group-hover:translate-x-1 group-hover:text-purple-600 
-                      dark:group-hover:text-purple-400">
+                      dark:group-hover:text-purple-400"
+                    >
                       {item.name}
                     </span>
 
-                    <div className="absolute left-2 transform -translate-x-full opacity-0 
+                    <div
+                      className="absolute left-2 transform -translate-x-full opacity-0 
                       group-hover:translate-x-0 group-hover:opacity-100 transition-all 
-                      duration-300">
-                      <svg className="w-4 h-4 text-purple-500" fill="none" 
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" 
-                          strokeWidth={2} d="M9 5l7 7-7 7" />
+                      duration-300"
+                    >
+                      <svg
+                        className="w-4 h-4 text-purple-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </div>
                   </Link>
@@ -211,8 +260,10 @@ export const MainLayout = () => {
 
             {/* Bottom Decoration */}
             <div className="relative p-4">
-              <div className="h-1 w-full bg-gradient-to-r from-transparent 
-                via-purple-500/20 to-transparent rounded-full" />
+              <div
+                className="h-1 w-full bg-gradient-to-r from-transparent 
+                via-purple-500/20 to-transparent rounded-full"
+              />
             </div>
           </div>
         </motion.div>
@@ -222,10 +273,12 @@ export const MainLayout = () => {
       <div className="md:pr-72">
         {/* Header */}
         <header className="fixed top-0 right-0 left-0 md:right-72 z-30">
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl 
-            shadow-lg shadow-purple-500/10 border-b border-purple-100/20 
-            dark:border-purple-900/20">
-            <div className="flex h-16 items-center justify-between px-4">
+          <div
+            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl 
+            shadow-lg shadow-purple-500/10 border-b xl:rounded-none rounded-b-2xl border-purple-100/20 
+            dark:border-purple-900/20"
+          >
+            <div className="flex h-16 items-center justify-between px-4 ">
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 180 }}
                 whileTap={{ scale: 0.9 }}
@@ -275,7 +328,10 @@ export const MainLayout = () => {
       </div>
 
       {/* Settings Modal */}
-      <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} />
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   );
 };
