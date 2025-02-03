@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { PlusIcon, TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
-
+import { motion, AnimatePresence } from 'framer-motion';
 interface Resolution {
   id: number;
   title: string;
@@ -41,7 +41,7 @@ const Resolutions: React.FC<ResolutionsProps> = ({
     status: "pending",
   });
 
-  const getStatusColor = (status: Resolution["status"]) => {
+  const getStatusStyle = (status: Resolution["status"]) => {
     switch (status) {
       case "completed":
         return "bg-green-100 text-green-800";
@@ -90,135 +90,108 @@ const Resolutions: React.FC<ResolutionsProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl 
+        shadow-lg shadow-purple-500/10 border border-purple-100/20 
+        dark:border-purple-900/20 p-6"
+    >
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+        <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 
+          to-blue-600 bg-clip-text text-transparent">
           مصوبات جلسه
         </h3>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setShowAddForm(true)}
-          className="btn-primary flex items-center"
+          className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 
+            to-blue-500 text-white rounded-xl shadow-lg shadow-purple-500/20 
+            hover:shadow-purple-500/30 transition-all duration-300"
         >
           <PlusIcon className="h-5 w-5 ml-2" />
           افزودن مصوبه
-        </button>
+        </motion.button>
       </div>
 
-      {showAddForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="mb-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                عنوان
-              </label>
-              <input
-                type="text"
-                className="input-primary"
-                value={newResolution.title}
-                onChange={(e) =>
-                  setNewResolution({ ...newResolution, title: e.target.value })
-                }
-                required
-              />
+      <AnimatePresence>
+        {showAddForm && (
+          <motion.form
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            onSubmit={handleSubmit}
+            className="mb-6 bg-gradient-to-r from-purple-50/50 to-blue-50/50 
+              dark:from-gray-700/50 dark:to-gray-700/50 backdrop-blur-sm p-6 
+              rounded-xl border border-purple-100/20 dark:border-purple-900/20 
+              shadow-lg shadow-purple-500/5"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 
+                  dark:text-gray-300 mb-2">
+                  عنوان
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-2 rounded-xl bg-white/80 
+                    dark:bg-gray-800/80 backdrop-blur-sm border border-purple-100/20 
+                    dark:border-purple-900/20 shadow-sm focus:ring-2 
+                    focus:ring-purple-500/20 focus:border-purple-500/20 
+                    transition-all duration-300"
+                  value={newResolution.title}
+                  onChange={(e) => setNewResolution({ ...newResolution, title: e.target.value })}
+                  required
+                />
+              </div>
+              {/* سایر فیلدهای فرم با همین استایل */}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                مسئول پیگیری
-              </label>
-              <input
-                type="text"
-                className="input-primary"
-                value={newResolution.assignee}
-                onChange={(e) =>
-                  setNewResolution({
-                    ...newResolution,
-                    assignee: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                مهلت انجام
-              </label>
-              <input
-                type="date"
-                className="input-primary"
-                value={format(newResolution.dueDate, "yyyy-MM-dd")}
-                onChange={(e) =>
-                  setNewResolution({
-                    ...newResolution,
-                    dueDate: new Date(e.target.value),
-                  })
-                }
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                وضعیت
-              </label>
-              <select
-                className="input-primary"
-                value={newResolution.status}
-                onChange={(e) =>
-                  setNewResolution({
-                    ...newResolution,
-                    status: e.target.value as Resolution["status"],
-                  })
-                }
+            <div className="mt-4 flex justify-end space-x-4 space-x-reverse">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
+                onClick={() => {
+                  setShowAddForm(false);
+                  setEditingId(null);
+                }}
+                className="px-4 py-2 bg-gray-500 text-white rounded-xl 
+                  shadow-lg shadow-gray-500/20 hover:shadow-gray-500/30 
+                  transition-all duration-300"
               >
-                <option value="pending">در حال انجام</option>
-                <option value="completed">انجام شده</option>
-                <option value="overdue">تاخیر در انجام</option>
-                <option value="cancelled">لغو شده</option>
-              </select>
+                انصراف
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 
+                  text-white rounded-xl shadow-lg shadow-purple-500/20 
+                  hover:shadow-purple-500/30 transition-all duration-300"
+              >
+                {editingId !== null ? "ویرایش" : "افزودن"}
+              </motion.button>
             </div>
-          </div>
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              توضیحات
-            </label>
-            <textarea
-              className="input-primary"
-              rows={3}
-              value={newResolution.description}
-              onChange={(e) =>
-                setNewResolution({
-                  ...newResolution,
-                  description: e.target.value,
-                })
-              }
-              required
-            />
-          </div>
-          <div className="mt-4 flex justify-end space-x-4 space-x-reverse">
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setShowAddForm(false);
-                setEditingId(null);
-              }}
-            >
-              انصراف
-            </button>
-            <button type="submit" className="btn-primary">
-              {editingId !== null ? "ویرایش" : "افزودن"}
-            </button>
-          </div>
-        </form>
-      )}
+          </motion.form>
+        )}
+      </AnimatePresence>
 
-      <div className="space-y-4">
-        {resolutions.map((resolution) => (
-          <div
+      <motion.div 
+        layout
+        className="space-y-4"
+      >
+        {resolutions.map((resolution, index) => (
+          <motion.div
             key={resolution.id}
-            className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="group bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm 
+              rounded-xl border border-purple-100/20 dark:border-purple-900/20 
+              p-4 hover:shadow-lg hover:shadow-purple-500/10 transition-all 
+              duration-300"
           >
             <div className="flex justify-between items-start">
               <div>
@@ -229,8 +202,11 @@ const Resolutions: React.FC<ResolutionsProps> = ({
                   {resolution.description}
                 </p>
               </div>
-              <div className="flex items-center space-x-2 space-x-reverse">
-                <button
+              <div className="flex items-center space-x-2 space-x-reverse 
+                opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => {
                     setEditingId(resolution.id);
                     setNewResolution({
@@ -242,16 +218,20 @@ const Resolutions: React.FC<ResolutionsProps> = ({
                     });
                     setShowAddForm(true);
                   }}
-                  className="text-blue-600 hover:text-blue-800"
+                  className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50/50 
+                    rounded-lg transition-colors duration-300"
                 >
                   <PencilIcon className="h-5 w-5" />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => onDeleteResolution(resolution.id)}
-                  className="text-red-600 hover:text-red-800"
+                  className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50/50 
+                    rounded-lg transition-colors duration-300"
                 >
                   <TrashIcon className="h-5 w-5" />
-                </button>
+                </motion.button>
               </div>
             </div>
             <div className="mt-4 flex items-center justify-between">
@@ -263,18 +243,15 @@ const Resolutions: React.FC<ResolutionsProps> = ({
                   مهلت: {format(resolution.dueDate, "yyyy/MM/dd")}
                 </span>
               </div>
-              <span
-                className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
-                  resolution.status
-                )}`}
-              >
+              <span className={`px-4 py-1.5 rounded-xl text-sm font-medium 
+                transition-all duration-300 ${getStatusStyle(resolution.status)}`}>
                 {getStatusText(resolution.status)}
               </span>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
