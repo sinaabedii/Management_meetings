@@ -245,13 +245,6 @@ const Reports = () => {
     generateAttendanceData(6)
   );
 
-  const metrics: MeetingMetrics = {
-    totalMeetings: 145,
-    completedMeetings: 128,
-    averageParticipants: 8.5,
-    averageDuration: 75,
-  };
-
   const handleDateRangeChange = useCallback((newRange: DateRangeType) => {
     setDateRange(newRange);
     const months =

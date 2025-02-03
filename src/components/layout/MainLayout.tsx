@@ -55,34 +55,18 @@ export const MainLayout = () => {
       >
         <div className="h-full flex flex-col rounded-2xl">
           {/* Mobile Header */}
-          <div
-            className="relative mx-auto w-full p-4 border-b border-purple-100/20 
-            dark:border-purple-900/20"
-          >
+          <div className="relative mx-auto w-full shadow-sm px-4 py-2 mb-4">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="relative h-12 rounded-xl bg-gradient-to-r from-purple-500/5 
-                to-blue-500/5 p-[1px] overflow-hidden group"
+              className="relative h-12 flex items-center justify-center"
             >
-              <div className="absolute inset-0">
-                <div
-                  className="absolute inset-0 bg-gradient-to-r from-purple-600 
-                  to-blue-600 animate-border-flow"
-                />
-              </div>
-
-              <div
-                className="relative h-full rounded-xl bg-white/80 dark:bg-gray-800/80 
-                backdrop-blur-sm flex items-center justify-center"
+              <span
+                className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-500 to-blue-500 
+      bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-400 hover:to-blue-400 
+      transition-all duration-300 drop-shadow-sm"
               >
-                <div className="absolute inset-0 bg-grid-gray-500/[0.025] bg-[size:20px_20px]" />
-                <span
-                  className="text-xl font-bold bg-gradient-to-br from-gray-900 
-                  to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent"
-                >
-                  پارسیم
-                </span>
-              </div>
+                پارسیم
+              </span>
             </motion.div>
           </div>
 
@@ -164,31 +148,18 @@ export const MainLayout = () => {
             dark:border-purple-900/20 shadow-[0_0_50px_0_rgba(192,132,252,0.2)]"
           >
             {/* Logo Section */}
-            <div className="relative mx-auto w-full px-6 py-6">
+            <div className="relative mx-auto w-full shadow-sm px-4 py-2 mb-4">
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="relative h-16 rounded-2xl bg-gradient-to-r from-purple-500/5 
-                  to-blue-500/5 p-[1px] overflow-hidden group"
+                className="relative h-12 flex items-center justify-center"
               >
-                <div className="absolute inset-0">
-                  <div
-                    className="absolute inset-0 bg-gradient-to-r from-purple-600 
-                    to-blue-600 animate-border-flow"
-                  />
-                </div>
-
-                <div
-                  className="relative h-full rounded-2xl bg-white/80 dark:bg-gray-800/80 
-                  backdrop-blur-sm flex items-center justify-center"
+                <span
+                  className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-500 to-blue-500 
+      bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-400 hover:to-blue-400 
+      transition-all duration-300 drop-shadow-sm"
                 >
-                  <div className="absolute inset-0 bg-grid-gray-500/[0.025] bg-[size:20px_20px]" />
-                  <span
-                    className="text-2xl font-bold bg-gradient-to-br from-gray-900 
-                    to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent"
-                  >
-                    پارسیم
-                  </span>
-                </div>
+                  پارسیم
+                </span>
               </motion.div>
             </div>
 
@@ -314,7 +285,7 @@ export const MainLayout = () => {
 
         {/* Main */}
         <main className="pt-16">
-          <div className="px-4 py-6 mx-auto">
+          <div className=" py-6 mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

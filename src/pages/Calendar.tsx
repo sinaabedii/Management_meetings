@@ -52,7 +52,7 @@ const CalendarPage = () => {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="container mx-auto px-4 "
+      className="container mx-auto"
     >
       <div className="mb-6 flex items-center justify-between">
         <motion.h1 
