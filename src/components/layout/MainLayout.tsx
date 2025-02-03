@@ -7,12 +7,10 @@ import {
   FolderIcon,
   HomeIcon,
   UsersIcon,
-  XMarkIcon,
   Bars3Icon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { SiGotomeeting } from "react-icons/si";
-import clsx from "clsx";
 import ProfileMenu from "../common/ProfileMenu";
 import NotificationsDropdown from "../common/NotificationsDropdown";
 import SearchDropdown from "../common/SearchDropdown";
@@ -45,21 +43,6 @@ export const MainLayout = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 
       dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      
-      {/* Mobile Backdrop */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-
       {/* Mobile Sidebar */}
       <motion.div
         initial={{ x: 300 }}
