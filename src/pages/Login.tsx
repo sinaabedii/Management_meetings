@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../hooks/useAuth";
-import { Lock, User } from "lucide-react";
+import { Eye, EyeOff, Lock, User } from "lucide-react";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 interface LoginFormData {
   username: string;
@@ -31,6 +32,8 @@ style.textContent = `
 document.head.appendChild(style);
 
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -118,21 +121,30 @@ const Login = () => {
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 left-0 pl-3 flex items-center transition-colors
+      hover:text-blue-500 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-blue-500" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-gray-400 hover:text-blue-500" />
+                  )}
+                </button>
                 <input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   {...register("password", {
                     required: "رمز عبور الزامی است",
                     validate: (value) =>
                       value.trim() !== "" || "رمز عبور نمی‌تواند خالی باشد",
                   })}
-                  className={`block w-full pr-10 text-right py-4 rounded-xl bg-gray-50 dark:bg-gray-700 shadow-sm ring-1 
-                    ${
-                      errors.password
-                        ? "ring-red-500"
-                        : "ring-gray-200 dark:ring-gray-400"
-                    } 
-                    placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 transition-all`}
+                  className={`block w-full px-10 text-right py-4 rounded-xl bg-gray-50 
+      dark:bg-gray-700 shadow-sm ring-1 
+      ${errors.password ? "ring-red-500" : "ring-gray-200 dark:ring-gray-400"} 
+      placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 transition-all`}
                   placeholder="رمز عبور"
                 />
               </div>

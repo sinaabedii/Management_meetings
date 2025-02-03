@@ -16,6 +16,7 @@ const Files = lazy(() => import("./pages/Files"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+// const ChatRoom = lazy(() => import("./pages/ChatRoom"));
 
 const AppRoutes = () => {
   return (
@@ -46,6 +47,16 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          {/* <Route
+            path="/chatroom"
+            element={
+              <ProtectedRoute
+                requiredPermissions={[PERMISSIONS.MANAGE_MEETINGS]}
+              >
+                <ChatRoom />
+              </ProtectedRoute>
+            }
+          /> */}
           <Route
             path="/meetings"
             element={

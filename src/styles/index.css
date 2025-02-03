@@ -244,3 +244,25 @@
     --card-foreground: 210 40% 98%;
   }
 }
+
+@keyframes border-flow {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.5; transform: translate(0, 0); }
+  50% { opacity: 0.8; transform: translate(10px, -10px); }
+}
+
+.animate-border-flow {
+  animation: border-flow 4s linear infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
