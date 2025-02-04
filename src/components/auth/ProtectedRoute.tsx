@@ -26,7 +26,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (requiredPermissions.length > 0 && !requiredPermissions.every(hasPermission)) {
-    return <Navigate to="/unauthorized" replace />;
+    return <Navigate to="/404" replace />;
   }
 
   return <>{children}</>;

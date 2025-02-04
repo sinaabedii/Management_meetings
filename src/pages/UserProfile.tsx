@@ -74,11 +74,11 @@ const MOCK_USER = {
 };
 
 const UserProfile = () => {
-  const { id } = useParams<{ id: string }>();
+  // const { id } = useParams<{ id: string }>();
   const user = MOCK_USER; 
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-6 py-8">
       {/* Header/Bio Section */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
         <div className="flex items-start justify-between">

@@ -115,14 +115,14 @@ const Users = () => {
     });
 
   return (
-    <div className="container mx-auto px-4 ">
+    <div className="container mx-auto px-6 ">
       {/* Header Section */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex justify-between items-center mb-6"
       >
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
           مدیریت کاربران
         </h1>
         <motion.button
@@ -132,7 +132,7 @@ const Users = () => {
             setEditingUser(null);
             setShowModal(true);
           }}
-          className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl
+          className="px-2 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl
           shadow-lg shadow-purple-500/30 hover:shadow-blue-500/40 transition-all duration-300
           flex items-center gap-2"
         >
@@ -291,7 +291,7 @@ const Users = () => {
                 <span className="text-sm text-gray-500 dark:text-gray-400">
                   آخرین فعالیت: {user.lastActive}
                 </span>
-                <div className="flex gap-2">
+                <div className="flex gap-4">
                   <button
                     className="text-purple-600 hover:text-purple-700 dark:text-purple-400 
                     dark:hover:text-purple-300 transition-colors duration-300 text-sm font-medium"
@@ -304,7 +304,7 @@ const Users = () => {
                   </button>
                   <button 
                     onClick={() => navigate(`/users/${user.id}`)} 
-                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 
+                    className="text-blue-600 w-28 hover:text-blue-700 dark:text-blue-400 
                     dark:hover:text-blue-300 transition-colors duration-300 text-sm font-medium"
                   >
                     مشاهده پروفایل

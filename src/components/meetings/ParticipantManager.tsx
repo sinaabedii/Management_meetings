@@ -57,18 +57,6 @@ const ParticipantManager: React.FC<ParticipantManagerProps> = ({
     }
   };
 
-  const getAttendanceText = (attendance: Participant['attendance']) => {
-    switch (attendance) {
-      case 'present':
-        return 'حاضر';
-      case 'absent':
-        return 'غایب';
-      case 'pending':
-        return 'نامشخص';
-      default:
-        return '';
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

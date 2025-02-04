@@ -90,7 +90,7 @@ const UserDetails = () => {
   const user = MOCK_USER;
 
   return (
-    <div className="container mx-auto px-4 ">
+    <div className="container mx-auto px-6 ">
       <motion.button
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}

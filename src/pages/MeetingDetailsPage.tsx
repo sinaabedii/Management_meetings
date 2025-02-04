@@ -111,7 +111,7 @@ const MeetingDetailsPage = () => {
 
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-6">
       <div className="mb-6">
         <button
           onClick={() => navigate("/meetings")}

@@ -128,22 +128,22 @@ const Meetings = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 ">
+    <div className="container mx-auto px-6 ">
       {/* Header Section */}
       <div className="mb-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+          className="flex  md:flex-row justify-between items-start md:items-center gap-4"
         >
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
             مدیریت جلسات
           </h1>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl
+            className="px-2 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl
             shadow-lg shadow-purple-500/30 hover:shadow-blue-500/40 transition-all duration-300
             flex items-center gap-2"
           >

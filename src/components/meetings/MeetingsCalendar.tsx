@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EventClickArg, DateSelectArg } from '@fullcalendar/core';
-import '../../styles/calendar-styles.css'; // استایل‌های سفارشی تقویم
+import '../../styles/calendar-styles.css';
 
 interface Meeting {
   id: number;

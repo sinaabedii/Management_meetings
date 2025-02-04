@@ -88,7 +88,7 @@ const FileDetails = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 ">
+    <div className="container mx-auto px-6 ">
       <motion.button
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}

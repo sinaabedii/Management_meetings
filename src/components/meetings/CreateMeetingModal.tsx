@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
-import { useForm } from 'react-hook-form';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Meeting } from '../../types/meeting';
-import { motion } from 'framer-motion';
+import React, { useEffect } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment } from "react";
+import { useForm } from "react-hook-form";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Meeting } from "../../types/meeting";
+import { motion } from "framer-motion";
 
 interface CreateMeetingModalProps {
   isOpen: boolean;
@@ -27,19 +27,25 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  initialData
+  initialData,
 }) => {
-  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<MeetingFormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+  } = useForm<MeetingFormData>();
 
   useEffect(() => {
     if (initialData) {
-      setValue('title', initialData.title);
-      setValue('date', new Date(initialData.date).toISOString().split('T')[0]);
-      setValue('time', initialData.time);
-      setValue('duration', initialData.duration);
-      setValue('location', initialData.location);
-      setValue('description', initialData.description);
-      setValue('status', initialData.status);
+      setValue("title", initialData.title);
+      setValue("date", new Date(initialData.date).toISOString().split("T")[0]);
+      setValue("time", initialData.time);
+      setValue("duration", initialData.duration);
+      setValue("location", initialData.location);
+      setValue("description", initialData.description);
+      setValue("status", initialData.status);
     }
   }, [initialData, setValue]);
 
@@ -47,7 +53,7 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
     onSubmit({
       ...data,
       date: new Date(data.date),
-      id: initialData?.id
+      id: initialData?.id,
     });
     reset();
     onClose();
@@ -87,17 +93,19 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl 
+              <Dialog.Panel
+                className="w-full max-w-md transform overflow-hidden rounded-2xl 
                 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl p-6 text-right align-middle 
-                shadow-2xl transition-all border border-gray-200/20 dark:border-gray-700/20">
+                shadow-2xl transition-all border border-gray-200/20 dark:border-gray-700/20"
+              >
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-blue-500" />
-                
+
                 <Dialog.Title
                   as="h3"
                   className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 
                   bg-clip-text text-transparent flex justify-between items-center mb-6"
                 >
-                  {initialData ? 'ویرایش جلسه' : 'ایجاد جلسه جدید'}
+                  {initialData ? "ویرایش جلسه" : "ایجاد جلسه جدید"}
                   <motion.button
                     whileHover={{ rotate: 90 }}
                     transition={{ duration: 0.2 }}
@@ -109,7 +117,10 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                   </motion.button>
                 </Dialog.Title>
 
-                <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+                <form
+                  onSubmit={handleSubmit(handleFormSubmit)}
+                  className="space-y-6"
+                >
                   <div className="space-y-5">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -119,10 +130,12 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                         type="text"
                         className={inputClassName}
                         placeholder="عنوان جلسه را وارد کنید"
-                        {...register('title', { required: 'عنوان جلسه الزامی است' })}
+                        {...register("title", {
+                          required: "عنوان جلسه الزامی است",
+                        })}
                       />
                       {errors.title && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="mt-2 text-sm text-red-500 dark:text-red-400"
@@ -140,10 +153,12 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                         <input
                           type="date"
                           className={inputClassName}
-                          {...register('date', { required: 'تاریخ الزامی است' })}
+                          {...register("date", {
+                            required: "تاریخ الزامی است",
+                          })}
                         />
                         {errors.date && (
-                          <motion.p 
+                          <motion.p
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="mt-2 text-sm text-red-500 dark:text-red-400"
@@ -160,10 +175,10 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                         <input
                           type="time"
                           className={inputClassName}
-                          {...register('time', { required: 'زمان الزامی است' })}
+                          {...register("time", { required: "زمان الزامی است" })}
                         />
                         {errors.time && (
-                          <motion.p 
+                          <motion.p
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="mt-2 text-sm text-red-500 dark:text-red-400"
@@ -182,13 +197,16 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                         type="number"
                         className={inputClassName}
                         placeholder="مثال: 60"
-                        {...register('duration', {
-                          required: 'مدت زمان الزامی است',
-                          min: { value: 15, message: 'حداقل مدت زمان 15 دقیقه است' }
+                        {...register("duration", {
+                          required: "مدت زمان الزامی است",
+                          min: {
+                            value: 15,
+                            message: "حداقل مدت زمان 15 دقیقه است",
+                          },
                         })}
                       />
                       {errors.duration && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="mt-2 text-sm text-red-500 dark:text-red-400"
@@ -206,10 +224,12 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                         type="text"
                         className={inputClassName}
                         placeholder="مکان جلسه را وارد کنید"
-                        {...register('location', { required: 'مکان الزامی است' })}
+                        {...register("location", {
+                          required: "مکان الزامی است",
+                        })}
                       />
                       {errors.location && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="mt-2 text-sm text-red-500 dark:text-red-400"
@@ -225,14 +245,16 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                       </label>
                       <select
                         className={inputClassName}
-                        {...register('status', { required: 'وضعیت الزامی است' })}
+                        {...register("status", {
+                          required: "وضعیت الزامی است",
+                        })}
                       >
                         <option value="scheduled">برنامه‌ریزی شده</option>
                         <option value="completed">برگزار شده</option>
                         <option value="cancelled">لغو شده</option>
                       </select>
                       {errors.status && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="mt-2 text-sm text-red-500 dark:text-red-400"
@@ -250,7 +272,7 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                         className={`${inputClassName} resize-none`}
                         rows={3}
                         placeholder="توضیحات جلسه را وارد کنید"
-                        {...register('description')}
+                        {...register("description")}
                       />
                     </div>
                   </div>
@@ -274,7 +296,7 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({
                       text-white hover:from-purple-600 hover:to-blue-600 transition-all duration-300
                       focus:ring-2 focus:ring-purple-500/20 dark:focus:ring-purple-400/20"
                     >
-                      {initialData ? 'ویرایش' : 'ایجاد'}
+                      {initialData ? "ویرایش" : "ایجاد"}
                     </motion.button>
                   </div>
                 </form>

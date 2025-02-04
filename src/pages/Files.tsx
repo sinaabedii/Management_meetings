@@ -97,14 +97,14 @@ const Files = () => {
   });
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-6">
       {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex justify-between items-center mb-8"
       >
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
           مدیریت فایل‌ها
         </h1>
         <div className="flex items-center space-x-4 space-x-reverse">

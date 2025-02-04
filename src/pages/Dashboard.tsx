@@ -73,7 +73,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen px-12">
+    <div className="min-h-screen px-6">
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white overflow-hidden rounded-xl">
         <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 justify-between">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center px-4 sm:px-6 lg:px-8 py-12">
@@ -86,8 +86,8 @@ const Dashboard = () => {
               </p>
             </div>
           </div>
-          <div className="flex justify-center lg:w-1/4 ">
-            <div className="w-full max-w-[400px] h-[300px] sm:h-[350px] md:h-[400px] overflow-hidden bg-white/10">
+          <div className="flex justify-center lg:w-2/6 h-full left-0">
+            <div className="w-full max-w-[500px] h-[300px] sm:h-[350px] md:h-[400px] overflow-hidden bg-white/10">
               <video
                 className="w-full h-full object-cover p-0"
                 autoPlay
