@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  PhoneIcon,
   MicrophoneIcon,
   VideoCameraIcon,
   ComputerDesktopIcon,
-  ArrowPathIcon,
-  ChatBubbleLeftRightIcon,
   XMarkIcon,
+  HandRaisedIcon,
+  UserPlusIcon,
+  UserGroupIcon,
+  LockClosedIcon,
+  ArrowsPointingOutIcon,
 } from "@heroicons/react/24/outline";
 
 // تعریف پراپرتی‌های کامپوننت
@@ -24,9 +26,77 @@ interface ControlButtonProps {
   activeColor?: string;
   children: React.ReactNode;
   tooltip?: string;
+  className?: string;
 }
 
-const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
+// اطلاعات شرکت‌کنندگان مجازی
+interface Participant {
+  id: number;
+  name: string;
+  avatar: string;
+  isActive: boolean;
+  isMuted: boolean;
+  isVideoOff: boolean;
+  isRaisingHand: boolean;
+  isHost: boolean;
+  isScreenSharing: boolean;
+}
+
+// تعریف نوع برای پیام‌های چت
+interface ChatMessage {
+  id: number;
+  sender: string;
+  senderId: number;
+  text: string;
+  time: string;
+  isMine: boolean;
+  isSystem?: boolean;
+}
+
+// کامپوننت تایمر مجزا برای مدیریت زمان
+const CallTimer: React.FC<{ status: string }> = React.memo(({ status }) => {
+  const [time, setTime] = useState<number>(0);
+  const timerRef = useRef<number | null>(null);
+  
+  useEffect(() => {
+    if (status === "active") {
+      if (timerRef.current === null) {
+        timerRef.current = window.setInterval(() => {
+          setTime(prev => prev + 1);
+        }, 1000) as unknown as number;
+      }
+    } else {
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      
+      if (status === "idle") {
+        setTime(0);
+      }
+    }
+    
+    return () => {
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [status]);
+  
+  // تبدیل ثانیه‌ها به فرمت mm:ss
+  const formattedTime = useMemo(() => {
+    const mins = Math.floor(time / 60);
+    const secs = time % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }, [time]);
+  
+  return (
+    <span>{formattedTime}</span>
+  );
+});
+
+const MockVideoCall: React.FC<VideoCallProps> = React.memo(({ meetingId, onClose }) => {
+  // وضعیت‌های اصلی کال
   const [isCallActive, setIsCallActive] = useState<boolean>(false);
   const [isMicMuted, setIsMicMuted] = useState<boolean>(false);
   const [isVideoOff, setIsVideoOff] = useState<boolean>(false);
@@ -34,45 +104,122 @@ const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
   const [isChat, setIsChat] = useState<boolean>(false);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [callStatus, setCallStatus] = useState<string>("idle"); // idle, calling, active, ended
-  const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [isRaisingHand, setIsRaisingHand] = useState<boolean>(false);
+  const [isSpeakerMuted, setIsSpeakerMuted] = useState<boolean>(false);
+  const [showParticipants, setShowParticipants] = useState<boolean>(false);
+  const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
+  const [messageText, setMessageText] = useState<string>("");
 
+  // برای کنترل نمایش ویدیوها در موبایل
+  const [activeVideoId, setActiveVideoId] = useState<number>(0); // 0 = خودم، 1 تا n+1 = سایر شرکت‌کنندگان
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
+
+  // رفرنس‌های ویدیو
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const remoteVideoRefs = useRef<{ [key: number]: HTMLVideoElement | null }>({});
+  const timerRef = useRef<number | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // تابع شروع تماس
-  const startCall = () => {
+  // شرکت‌کنندگان مجازی در تماس
+  const [participants, setParticipants] = useState<Participant[]>([
+    {
+      id: 1,
+      name: "علی رضایی",
+      avatar: "/api/placeholder/40/40",
+      isActive: true,
+      isMuted: false,
+      isVideoOff: false,
+      isRaisingHand: false,
+      isHost: false,
+      isScreenSharing: false,
+    },
+    {
+      id: 2,
+      name: "سارا احمدی",
+      avatar: "/api/placeholder/40/40",
+      isActive: true,
+      isMuted: true,
+      isVideoOff: false,
+      isRaisingHand: false,
+      isHost: false,
+      isScreenSharing: false,
+    },
+    {
+      id: 3,
+      name: "محمد حسینی",
+      avatar: "/api/placeholder/40/40",
+      isActive: true,
+      isMuted: false,
+      isVideoOff: true,
+      isRaisingHand: true,
+      isHost: true,
+      isScreenSharing: false,
+    },
+  ]);
+
+  // پیام‌های چت
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      id: 1,
+      sender: "سارا احمدی",
+      senderId: 2,
+      text: "سلام، صدای من را می‌شنوید؟",
+      time: "12:34",
+      isMine: false,
+    },
+    {
+      id: 2,
+      sender: "شما",
+      senderId: 0,
+      text: "بله، صدای شما واضح است.",
+      time: "12:35",
+      isMine: true,
+    },
+    {
+      id: 3,
+      sender: "محمد حسینی",
+      senderId: 3,
+      text: "من هم می‌توانم صدای همه را بشنوم. آماده شروع جلسه هستیم.",
+      time: "12:36",
+      isMine: false,
+    },
+  ]);
+
+  // بررسی آیا دستگاه موبایل است یا خیر
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  // تبدیل ثانیه‌ها به فرمت mm:ss
+  const formatTime = useCallback((seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }, []);
+
+  // تابع شروع تماس - بهینه شده با useCallback
+  const startCall = useCallback(() => {
     setCallStatus("calling");
 
     // شبیه‌سازی زمان انتظار پاسخ
     setTimeout(() => {
       setCallStatus("active");
       setIsCallActive(true);
-
-      // شروع تایمر مدت مکالمه
-      timerRef.current = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1);
-      }, 1000);
     }, 2000);
-  };
+  }, []);
 
-  // تابع پایان تماس
-  const endCall = () => {
+  // تابع پایان تماس - بهینه شده با useCallback
+  const endCall = useCallback(() => {
     setCallStatus("ended");
     setIsCallActive(false);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
 
     // پاک کردن تایمر بعد از مدتی
     setTimeout(() => {
       setCallStatus("idle");
-      setElapsedTime(0);
     }, 2000);
-  };
+  }, []);
 
-  // تابع به اشتراک‌گذاری صفحه
-  const toggleScreenShare = async () => {
+  // تابع به اشتراک‌گذاری صفحه - بهینه شده با useCallback
+  const toggleScreenShare = useCallback(async () => {
     if (!isScreenSharing) {
       try {
         const screenStream = await navigator.mediaDevices.getDisplayMedia({
@@ -101,18 +248,96 @@ const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
       }
       setIsScreenSharing(false);
     }
-  };
+  }, [isScreenSharing, localStream]);
 
-  // تبدیل ثانیه‌ها به فرمت mm:ss
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
+  // تابع ارسال پیام چت - بهینه شده با useCallback
+  const sendMessage = useCallback(() => {
+    if (messageText.trim()) {
+      const newMessage: ChatMessage = {
+        id: chatMessages.length + 1,
+        sender: "شما",
+        senderId: 0,
+        text: messageText.trim(),
+        time: new Date().toLocaleTimeString("fa-IR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        isMine: true,
+      };
 
-  // دریافت جریان ویدیوی محلی
+      setChatMessages(prev => [...prev, newMessage]);
+      setMessageText("");
+    }
+  }, [messageText, chatMessages.length]);
+
+  // تغییر وضعیت دست بلند کردن برای یک شرکت‌کننده - بهینه شده با useCallback
+  const toggleParticipantHand = useCallback((participantId: number) => {
+    setParticipants(prev =>
+      prev.map((p) =>
+        p.id === participantId ? { ...p, isRaisingHand: !p.isRaisingHand } : p
+      )
+    );
+  }, []);
+
+  // تابع تغییر ویدیوی فعال در سایز موبایل - بهینه شده با useCallback
+  const changeActiveVideo = useCallback((videoId: number) => {
+    setActiveVideoId(videoId);
+  }, []);
+
+  // تابع برای بلند کردن دست - بهینه شده با useCallback
+  const toggleRaiseHand = useCallback(() => {
+    setIsRaisingHand(prev => {
+      const newValue = !prev;
+      
+      // شبیه‌سازی نمایش به سایرین
+      if (newValue) {
+        // اضافه کردن یک پیام سیستمی به چت
+        const systemMessage: ChatMessage = {
+          id: chatMessages.length + 1,
+          sender: "سیستم",
+          senderId: -1,
+          text: "شما دست خود را بلند کردید",
+          time: new Date().toLocaleTimeString("fa-IR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          isMine: false,
+          isSystem: true,
+        };
+
+        setChatMessages(prevMessages => [...prevMessages, systemMessage]);
+      }
+      
+      return newValue;
+    });
+  }, [chatMessages.length]);
+
+  // بررسی آیا دستگاه موبایل است
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // بررسی اولیه
+    checkIfMobile();
+
+    // اضافه کردن event listener برای تغییر سایز
+    window.addEventListener("resize", checkIfMobile);
+
+    // پاکسازی
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
+
+  // اسکرول به پایین چت وقتی پیام جدید می‌آید
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
+
+  // دریافت جریان ویدیوی محلی و شروع تماس (فقط یک بار)
   useEffect(() => {
     const getMedia = async () => {
       try {
@@ -127,10 +352,15 @@ const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
           localVideoRef.current.srcObject = stream;
         }
 
-        // تنظیم ویدیوی مجازی برای طرف مقابل
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.poster = "/api/placeholder/400/320";
-        }
+        // تنظیم ویدیوی مجازی برای طرف مقابل در remoteVideoRefs
+        participants.forEach((p) => {
+          if (remoteVideoRefs.current[p.id] && !p.isVideoOff) {
+            remoteVideoRefs.current[p.id]!.poster = "/api/placeholder/400/320";
+          }
+        });
+        
+        // شروع تماس پس از آماده شدن جریان ویدیو
+        startCall();
       } catch (error) {
         console.error("خطا در دسترسی به دوربین:", error);
       }
@@ -143,11 +373,8 @@ const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
       if (localStream) {
         localStream.getTracks().forEach((track) => track.stop());
       }
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
     };
-  }, []);
+  }, []); // وابستگی خالی برای فراخوانی یکبار
 
   // کنترل میکروفون
   useEffect(() => {
@@ -167,31 +394,33 @@ const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
     }
   }, [isVideoOff, localStream]);
 
-  const StatusIndicator = () => (
+  // کامپوننت نشانگر وضعیت تماس - بهینه شده با React.memo
+  const StatusIndicator = React.memo(() => (
     <div className="ml-2 flex items-center">
       {callStatus === "active" && (
         <motion.div
-          className="flex items-center text-green-600 dark:text-green-500 font-medium"
+          className="flex items-center text-green-600 dark:text-green-500 font-medium text-xs sm:text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <motion.div
-            className="w-2 h-2 bg-green-600 dark:bg-green-500 rounded-full mr-2"
+            className="w-2 h-2 bg-green-600 dark:bg-green-500 rounded-full mr-1 sm:mr-2"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
           />
-          <span>در حال گفتگو - {formatTime(elapsedTime)}</span>
+          <span className="hidden xs:inline">در حال گفتگو - </span>
+          <CallTimer status={callStatus} />
         </motion.div>
       )}
 
       {callStatus === "calling" && (
         <motion.div
-          className="flex items-center text-blue-600 dark:text-blue-500 font-medium"
+          className="flex items-center text-blue-600 dark:text-blue-500 font-medium text-xs sm:text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <motion.div
-            className="w-2 h-2 bg-blue-600 dark:bg-blue-500 rounded-full mr-2"
+            className="w-2 h-2 bg-blue-600 dark:bg-blue-500 rounded-full mr-1 sm:mr-2"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
           />
@@ -201,7 +430,7 @@ const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
 
       {callStatus === "ended" && (
         <motion.div
-          className="flex items-center text-red-600 dark:text-red-500 font-medium"
+          className="flex items-center text-red-600 dark:text-red-500 font-medium text-xs sm:text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -209,165 +438,186 @@ const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
         </motion.div>
       )}
     </div>
-  );
+  ));
 
-  const ControlButton: React.FC<ControlButtonProps> = ({
+  // کامپوننت دکمه کنترل - بهینه شده با React.memo
+  const ControlButton = React.memo<ControlButtonProps>(({
     onClick,
     disabled = false,
     isActive = false,
     activeColor = "",
     children,
     tooltip,
+    className = "",
   }) => (
     <motion.button
       onClick={onClick}
       disabled={disabled}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.98 }}
-      className={`relative group p-3 rounded-full transition-all duration-300 ${
+      className={`relative group p-2 sm:p-3 rounded-full transition-all duration-300 ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       } ${
         isActive
           ? `bg-gradient-to-r ${activeColor} text-white shadow-lg`
           : "bg-white/70 dark:bg-gray-800/70 hover:bg-white dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
-      }`}
+      } ${className}`}
     >
       {children}
-      {tooltip && (
-        <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+      {tooltip && !isMobile && (
+        <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none z-10">
           {tooltip}
         </div>
       )}
     </motion.button>
-  );
+  ));
 
-  return (
+  // کامپوننت نمایش شرکت‌کننده به صورت کارت - بهینه شده با React.memo
+  const ParticipantCard = React.memo(({
+    participant,
+    isMainView = false,
+  }: {
+    participant: Participant;
+    isMainView?: boolean;
+  }) => (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-6xl mx-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className={`relative rounded-xl overflow-hidden bg-gray-900 ${
+        isMainView ? "aspect-video" : "aspect-video"
+      } shadow-lg backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30`}
     >
-      {/* Header */}
-      <motion.div
-        className="flex justify-between items-center mb-6"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          {meetingId ? `جلسه تصویری شماره ${meetingId}` : "تماس تصویری سریع"}
-        </h1>
-        <StatusIndicator />
-      </motion.div>
-
-      {/* Videos Container */}
-      <div
-        className={`grid ${
-          isChat ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1 md:grid-cols-2"
-        } gap-4 mb-6`}
-      >
-        {/* Remote Video */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
-          className={`relative rounded-2xl overflow-hidden bg-gray-900 aspect-video shadow-lg ${
-            isChat ? "md:col-span-2" : ""
-          } backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30`}
-        >
-          {isCallActive ? (
-            <div className="h-full">
-              <video
-                ref={remoteVideoRef}
-                autoPlay
-                playsInline
-                className="w-full h-full object-cover"
-              />
-              <img
-                src="/api/placeholder/640/360"
-                alt="Mock remote video"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-
-              <div className="absolute top-4 left-4 bg-gray-800/70 text-white px-3 py-1 rounded-full text-sm backdrop-blur-sm font-medium">
-                کاربر مقابل
-              </div>
-
-              {/* Overlay controls for remote video */}
-              <div className="absolute bottom-4 right-4 flex space-x-2 space-x-reverse">
-                <ControlButton
-                  onClick={() => {}}
-                  tooltip="درخواست اختیار صفحه"
-                  disabled={!isCallActive}
-                >
-                  <ArrowPathIcon className="h-5 w-5" />
-                </ControlButton>
-              </div>
-            </div>
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-gray-900 to-gray-800">
-              <div className="text-center text-white">
-                {callStatus === "calling" ? (
-                  <div className="flex flex-col items-center">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                      className="h-16 w-16 border-t-2 border-l-2 border-white rounded-full mb-4"
-                    />
-                    <p className="text-lg">در انتظار پاسخ...</p>
-                  </div>
-                ) : (
-                  <div className="text-lg">
-                    <PhoneIcon className="h-16 w-16 text-gray-600 dark:text-gray-400 mx-auto mb-4" />
-                    {callStatus === "ended"
-                      ? "تماس پایان یافت"
-                      : "آماده برای تماس تصویری"}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </motion.div>
-
-        {/* Local Video */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="relative rounded-2xl overflow-hidden bg-gray-900 aspect-video shadow-lg backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30"
-        >
+      {!participant.isVideoOff ? (
+        <div className="h-full w-full overflow-hidden">
           <video
-            ref={localVideoRef}
+            ref={(el) => {
+              remoteVideoRefs.current[participant.id] = el;
+            }}
             autoPlay
             playsInline
-            muted
-            className={`w-full h-full object-cover ${
-              isVideoOff ? "hidden" : ""
-            }`}
+            muted={participant.isMuted}
+            className="w-full h-full object-cover"
+            poster="/api/placeholder/400/320"
           />
-
-          {isVideoOff && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-gray-900 to-gray-800">
-              <div className="w-24 h-24 bg-gradient-to-br from-purple-500/80 to-blue-500/80 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/20">
-                <span className="text-white text-xl font-medium">شما</span>
-              </div>
+          {participant.isScreenSharing && (
+            <div className="absolute top-2 right-2 bg-blue-500/80 text-white text-xs px-2 py-1 rounded-full z-10">
+              <ComputerDesktopIcon className="inline h-3 w-3 mr-1" />
+              اشتراک صفحه
             </div>
           )}
-
-          <div className="absolute top-4 left-4 bg-gray-800/70 text-white px-3 py-1 rounded-full text-sm backdrop-blur-sm font-medium">
-            شما {isScreenSharing && "(اشتراک صفحه)"}
+        </div>
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500/80 to-purple-500/80 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-lg sm:text-xl font-medium">
+              {participant.name.charAt(0)}
+            </span>
           </div>
+        </div>
+      )}
 
-          {/* Video Status Indicators */}
-          <div className="absolute top-4 right-4 flex space-x-2 space-x-reverse">
+      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <span className="text-white text-xs sm:text-sm font-medium">
+              {participant.name}
+              {participant.isHost && (
+                <LockClosedIcon className="inline-block h-3 w-3 ml-1 text-yellow-400" />
+              )}
+            </span>
+          </div>
+          <div className="flex space-x-1 space-x-reverse">
+            {participant.isMuted && (
+              <div className="bg-red-500/80 text-white p-1 rounded-full">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3 w-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3l18 18"
+                  />
+                </svg>
+              </div>
+            )}
+            {participant.isRaisingHand && (
+              <div className="bg-yellow-500/80 text-white p-1 rounded-full">
+                <HandRaisedIcon className="h-3 w-3" />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* قابلیت تغییر به نمای اصلی در موبایل */}
+      {!isMainView && isMobile && (
+        <button
+          className="absolute top-2 right-2 bg-gray-800/70 text-white p-1 rounded-full"
+          onClick={() => changeActiveVideo(participant.id)}
+        >
+          <ArrowsPointingOutIcon className="h-3 w-3" />
+        </button>
+      )}
+    </motion.div>
+  ));
+
+  // کامپوننت نمایش ویدیوی خودم - بهینه شده با React.memo
+  const LocalVideoComponent = React.memo(({
+    isMainView = false,
+  }: {
+    isMainView?: boolean;
+  }) => (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.2 }}
+      className={`relative rounded-xl overflow-hidden bg-gray-900 ${
+        isMainView ? "aspect-video" : "aspect-video"
+      } shadow-lg backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30 `}
+    >
+      <video
+        ref={localVideoRef}
+        autoPlay
+        playsInline
+        muted
+        className={`w-full h-full object-cover ${isVideoOff ? "hidden" : ""}`}
+      />
+
+      {isVideoOff && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-500/80 to-blue-500/80 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-lg sm:text-xl font-medium">
+              شما
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <span className="text-white text-xs sm:text-sm font-medium">
+              شما {isScreenSharing && "(اشتراک صفحه)"}
+            </span>
+          </div>
+          <div className="flex space-x-1 space-x-reverse">
             {isMicMuted && (
               <div className="bg-red-500/80 text-white p-1 rounded-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
+                  className="h-3 w-3"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -387,275 +637,363 @@ const MockVideoCall: React.FC<VideoCallProps> = ({ meetingId, onClose }) => {
                 </svg>
               </div>
             )}
-            {isVideoOff && (
-              <div className="bg-red-500/80 text-white p-1 rounded-full">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3l18 18"
-                  />
-                </svg>
+            {isRaisingHand && (
+              <div className="bg-yellow-500/80 text-white p-1 rounded-full">
+                <HandRaisedIcon className="h-3 w-3" />
               </div>
             )}
           </div>
-        </motion.div>
-
-        {/* Chat Panel (Conditionally shown) */}
-        {isChat && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg h-full border border-gray-200/30 dark:border-gray-700/30 flex flex-col"
-          >
-            <div className="p-3 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 rounded-t-2xl">
-              <h3 className="font-medium text-gray-800 dark:text-white flex items-center">
-                <ChatBubbleLeftRightIcon className="h-5 w-5 mr-2 text-purple-500" />
-                گفتگوی متنی
-              </h3>
-            </div>
-            <div className="flex-1 p-4 overflow-y-auto">
-              <div className="space-y-4">
-                <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg rounded-tr-sm max-w-[80%] ml-auto">
-                  <p className="text-sm">سلام، صدای من را می‌شنوید؟</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 text-left mt-1">
-                    12:34
-                  </p>
-                </div>
-                <div className="bg-purple-100 dark:bg-purple-900/40 p-3 rounded-lg rounded-tl-sm max-w-[80%]">
-                  <p className="text-sm">بله، صدای شما واضح است.</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 text-right mt-1">
-                    12:35
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="p-3 border-t border-gray-200/50 dark:border-gray-700/50">
-              <div className="flex">
-                <input
-                  type="text"
-                  placeholder="پیام خود را بنویسید..."
-                  className="flex-1 px-3 py-2 bg-white/70 dark:bg-gray-700/70 rounded-lg border border-gray-200/50 dark:border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
-                />
-                <button className="ml-2 p-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
+        </div>
       </div>
 
-      {/* Call Controls */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mb-6"
-      >
-        <div className="p-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/30 dark:border-gray-700/30">
-          <div className="flex flex-wrap justify-center items-center gap-3">
-            <ControlButton
-              onClick={() => setIsMicMuted(!isMicMuted)}
-              isActive={isMicMuted}
-              activeColor="from-red-500 to-red-600"
-              tooltip={isMicMuted ? "فعال کردن میکروفون" : "قطع میکروفون"}
-            >
-              {isMicMuted ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3l18 18"
-                  />
-                </svg>
-              ) : (
-                <MicrophoneIcon className="h-6 w-6" />
-              )}
-            </ControlButton>
+      {/* قابلیت تغییر به نمای اصلی در موبایل */}
+      {!isMainView && isMobile && (
+        <button
+          className="absolute top-2 right-2 bg-gray-800/70 text-white p-1 rounded-full"
+          onClick={() => changeActiveVideo(0)}
+        >
+          <ArrowsPointingOutIcon className="h-3 w-3" />
+        </button>
+      )}
 
-            <ControlButton
-              onClick={() => setIsVideoOff(!isVideoOff)}
-              isActive={isVideoOff}
-              activeColor="from-red-500 to-red-600"
-              tooltip={isVideoOff ? "فعال کردن دوربین" : "قطع دوربین"}
-            >
-              {isVideoOff ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3l18 18"
-                  />
-                </svg>
-              ) : (
-                <VideoCameraIcon className="h-6 w-6" />
-              )}
-            </ControlButton>
-
-            <ControlButton
-              onClick={toggleScreenShare}
-              disabled={!isCallActive}
-              isActive={isScreenSharing}
-              activeColor="from-blue-500 to-blue-600"
-              tooltip={
-                isScreenSharing ? "توقف اشتراک‌گذاری" : "اشتراک‌گذاری صفحه"
-              }
-            >
-              <ComputerDesktopIcon className="h-6 w-6" />
-            </ControlButton>
-
-            <ControlButton
-              onClick={() => setIsChat(!isChat)}
-              isActive={isChat}
-              activeColor="from-purple-500 to-blue-500"
-              tooltip={isChat ? "بستن گفتگو" : "گفتگوی متنی"}
-            >
-              <ChatBubbleLeftRightIcon className="h-6 w-6" />
-            </ControlButton>
-
-            {!isCallActive ? (
-              <motion.button
-                onClick={startCall}
-                disabled={callStatus === "calling"}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className={`px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full 
-                shadow-lg shadow-green-500/30 flex items-center gap-2 transition-all duration-300 ${
-                  callStatus === "calling"
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
-                }`}
-              >
-                <PhoneIcon className="h-5 w-5" />
-                شروع تماس تصویری
-              </motion.button>
-            ) : (
-              <motion.button
-                onClick={endCall}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full 
-                shadow-lg shadow-red-500/30 flex items-center gap-2 transition-all duration-300"
-              >
-                <XMarkIcon className="h-5 w-5" />
-                پایان تماس
-              </motion.button>
-            )}
-          </div>
+      {isScreenSharing && (
+        <div className="absolute top-2 right-2 bg-blue-500/80 text-white text-xs px-2 py-1 rounded-full z-10">
+          <ComputerDesktopIcon className="inline h-3 w-3 mr-1" />
+          اشتراک صفحه
         </div>
-      </motion.div>
-
-      {/* Call Info */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <div className="p-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/30 dark:border-gray-700/30">
-          <h3 className="text-lg font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
-            اطلاعات تماس
-          </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-white/70 dark:bg-gray-700/70 p-3 rounded-xl border border-gray-200/30 dark:border-gray-600/30">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                وضعیت تماس
-              </p>
-              <p className="font-medium mt-1">
-                {callStatus === "idle" && "آماده"}
-                {callStatus === "calling" && "در حال تماس"}
-                {callStatus === "active" && "فعال"}
-                {callStatus === "ended" && "پایان یافته"}
-              </p>
-            </div>
-            <div className="bg-white/70 dark:bg-gray-700/70 p-3 rounded-xl border border-gray-200/30 dark:border-gray-600/30">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                مدت مکالمه
-              </p>
-              <p className="font-medium mt-1">{formatTime(elapsedTime)}</p>
-            </div>
-            <div className="bg-white/70 dark:bg-gray-700/70 p-3 rounded-xl border border-gray-200/30 dark:border-gray-600/30">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                وضعیت میکروفون
-              </p>
-              <p className="font-medium mt-1">
-                {isMicMuted ? "غیرفعال" : "فعال"}
-              </p>
-            </div>
-            <div className="bg-white/70 dark:bg-gray-700/70 p-3 rounded-xl border border-gray-200/30 dark:border-gray-600/30">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                وضعیت دوربین
-              </p>
-              <p className="font-medium mt-1">
-                {isVideoOff ? "غیرفعال" : "فعال"}
-              </p>
-            </div>
-          </div>
-
-          {/* دکمه بستن تماس و بازگشت به صفحه جلسات */}
-          <div className="flex justify-center mt-6">
-            <motion.button
-              onClick={onClose}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl 
-              shadow-lg flex items-center gap-2 transition-all duration-300"
-            >
-              <XMarkIcon className="h-5 w-5" />
-              بازگشت به صفحه جلسات
-            </motion.button>
-          </div>
-        </div>
-      </motion.div>
+      )}
     </motion.div>
+  ));
+
+  // کامپوننت پنل شرکت‌کنندگان - بهینه شده با React.memo
+  const ParticipantsPanel = React.memo(() => (
+    <motion.div
+      initial={{ opacity: 0, x: 300 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 300 }}
+      className="absolute inset-y-0 right-0 w-full sm:w-72 md:w-80 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg z-20 flex flex-col border-l border-gray-200/50 dark:border-gray-700/50"
+    >
+      <div className="p-3 border-b border-gray-200/50 dark:border-gray-700/50 flex justify-between items-center">
+        <h3 className="font-medium text-gray-800 dark:text-white flex items-center">
+          <UserGroupIcon className="h-5 w-5 ml-2 text-purple-500" />
+          شرکت‌کنندگان ({participants.length + 1})
+        </h3>
+        <button
+          onClick={() => setShowParticipants(false)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        >
+          <XMarkIcon className="h-5 w-5" />
+        </button>
+      </div>
+      <div className="flex-1 overflow-y-auto p-2">
+        <ul className="space-y-2">
+          {/* خودم */}
+          <li className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-medium mr-2">
+                ش
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-white">
+                  شما
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  میزبان
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-1 space-x-reverse">
+              {isMicMuted && (
+                <MicrophoneIcon className="h-4 w-4 text-red-500" />
+              )}
+              {isVideoOff && (
+                <VideoCameraIcon className="h-4 w-4 text-red-500" />
+              )}
+              {isRaisingHand && (
+                <HandRaisedIcon className="h-4 w-4 text-yellow-500" />
+              )}
+            </div>
+          </li>
+          {/* سایر شرکت‌کنندگان */}
+          {participants.map((participant) => (
+            <li
+              key={participant.id}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between"
+            >
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-medium mr-2">
+                  {participant.name.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white">
+                    {participant.name}
+                    {participant.isHost && (
+                      <LockClosedIcon className="inline-block h-3 w-3 ml-1 text-yellow-400" />
+                    )}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {participant.isScreenSharing
+                      ? "در حال اشتراک صفحه"
+                      : "شرکت‌کننده"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-1 space-x-reverse">
+                {participant.isMuted && (
+                  <MicrophoneIcon className="h-4 w-4 text-red-500" />
+                )}
+                {participant.isVideoOff && (
+                  <VideoCameraIcon className="h-4 w-4 text-red-500" />
+                )}
+                {participant.isRaisingHand && (
+                  <HandRaisedIcon className="h-4 w-4 text-yellow-500" />
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="p-3 border-t border-gray-200/50 dark:border-gray-700/50">
+        <button
+          onClick={() => setShowParticipants(false)}
+          className="w-full py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg text-sm flex items-center justify-center"
+        >
+          <UserPlusIcon className="h-4 w-4 ml-1" /> دعوت از افراد جدید
+        </button>
+      </div>
+    </motion.div>
+  ));
+
+  // کامپوننت نمایش پنل چت - بهینه شده با React.memo
+  const ChatPanel = React.memo(() => (
+    <motion.div
+      initial={{ opacity: 0, x: 300 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 300 }}
+      className="absolute inset-y-0 right-0 w-full sm:w-72 md:w-80 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg z-20 flex flex-col border-l border-gray-200/50 dark:border-gray-700/50"
+    >
+      <div className="p-3 border-b border-gray-200/50 dark:border-gray-700/50 flex justify-between items-center">
+        <h3 className="font-medium text-gray-800 dark:text-white">گفتگوی جلسه</h3>
+        <button
+          onClick={() => setIsChat(false)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        >
+          <XMarkIcon className="h-5 w-5" />
+        </button>
+      </div>
+      <div 
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-3"
+      >
+        {chatMessages.map((message) => (
+          <div 
+            key={message.id} 
+            className={`${
+              message.isMine 
+                ? "mr-auto ml-4 bg-purple-500 text-white" 
+                : message.isSystem 
+                  ? "mx-auto bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200" 
+                  : "ml-auto mr-4 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+            } p-3 rounded-lg max-w-[80%] shadow-sm`}
+          >
+            {!message.isMine && !message.isSystem && (
+              <p className="text-xs font-semibold mb-1 text-gray-700 dark:text-gray-300">
+                {message.sender}
+              </p>
+            )}
+            <p className="text-sm">{message.text}</p>
+            <p className="text-xs mt-1 text-right opacity-70">{message.time}</p>
+          </div>
+        ))}
+      </div>
+      <div className="p-3 border-t border-gray-200/50 dark:border-gray-700/50">
+        <div className="flex">
+          <input
+            type="text"
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+            placeholder="پیام خود را بنویسید..."
+            className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-r-lg px-3 py-2 outline-none"
+          />
+          <button
+            onClick={sendMessage}
+            className="bg-purple-500 text-white rounded-l-lg px-3 py-2"
+          >
+            ارسال
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  ));
+
+  // استفاده از useMemo برای کامپوننت‌های ویدیویی موبایل برای جلوگیری از رندر مجدد
+  const mobileVideoContent = useMemo(() => (
+    <div className="h-full flex flex-col">
+      <div className="flex-1 mb-2">
+        {activeVideoId === 0 ? (
+          <LocalVideoComponent isMainView={true} />
+        ) : (
+          <ParticipantCard
+            participant={participants.find(p => p.id === activeVideoId) || participants[0]}
+            isMainView={true}
+          />
+        )}
+      </div>
+      <div className="h-20 flex gap-2 overflow-x-auto py-1">
+        {activeVideoId !== 0 && (
+          <div className="h-full aspect-video flex-shrink-0">
+            <LocalVideoComponent />
+          </div>
+        )}
+        {participants.map(
+          (participant) =>
+            participant.id !== activeVideoId && (
+              <div key={participant.id} className="h-full aspect-video flex-shrink-0">
+                <ParticipantCard participant={participant} />
+              </div>
+            )
+        )}
+      </div>
+    </div>
+  ), [activeVideoId, participants]);
+  
+  // استفاده از useMemo برای کامپوننت‌های ویدیویی دسکتاپ برای جلوگیری از رندر مجدد
+  const desktopVideoContent = useMemo(() => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full">
+      <LocalVideoComponent />
+      {participants.map((participant) => (
+        <ParticipantCard key={participant.id} participant={participant} />
+      ))}
+    </div>
+  ), [participants]);
+
+  // رندر UI اصلی
+  return (
+    <div className="relative w-full h-full min-h-[60vh] bg-gray-900 rounded-xl overflow-hidden flex flex-col">
+      {/* هدر */}
+      <div className="bg-gray-800/80 backdrop-blur-sm p-4 flex justify-between items-center border-b border-gray-700/50">
+        <div className="flex items-center">
+          <h2 className="text-white font-medium text-lg">
+            {meetingId ? `جلسه شماره ${meetingId}` : "تماس تصویری"}
+          </h2>
+          <StatusIndicator />
+        </div>
+        <button
+          onClick={onClose}
+          className="text-gray-300 hover:text-white transition-colors"
+        >
+          <XMarkIcon className="h-6 w-6" />
+        </button>
+      </div>
+
+      {/* بخش اصلی - ویدیوها */}
+      <div className="flex-1 p-4 relative">
+        {isMobile ? mobileVideoContent : desktopVideoContent}
+      </div>
+
+      {/* کنترل‌ها */}
+      <div className="bg-gray-800/80 backdrop-blur-sm p-4 flex justify-center items-center space-x-2 space-x-reverse border-t border-gray-700/50">
+        <ControlButton
+          onClick={() => setIsMicMuted(!isMicMuted)}
+          isActive={isMicMuted}
+          activeColor="from-red-500 to-red-600"
+          tooltip={isMicMuted ? "فعال کردن میکروفون" : "قطع میکروفون"}
+        >
+          <MicrophoneIcon className="h-5 w-5" />
+        </ControlButton>
+
+        <ControlButton
+          onClick={() => setIsVideoOff(!isVideoOff)}
+          isActive={isVideoOff}
+          activeColor="from-red-500 to-red-600"
+          tooltip={isVideoOff ? "روشن کردن دوربین" : "خاموش کردن دوربین"}
+        >
+          <VideoCameraIcon className="h-5 w-5" />
+        </ControlButton>
+
+        <ControlButton
+          onClick={toggleScreenShare}
+          isActive={isScreenSharing}
+          activeColor="from-blue-500 to-blue-600"
+          tooltip={
+            isScreenSharing ? "پایان اشتراک صفحه" : "اشتراک‌گذاری صفحه"
+          }
+        >
+          <ComputerDesktopIcon className="h-5 w-5" />
+        </ControlButton>
+
+        <ControlButton
+          onClick={toggleRaiseHand}
+          isActive={isRaisingHand}
+          activeColor="from-yellow-500 to-yellow-600"
+          tooltip={isRaisingHand ? "پایین آوردن دست" : "بلند کردن دست"}
+        >
+          <HandRaisedIcon className="h-5 w-5" />
+        </ControlButton>
+
+        <ControlButton
+          onClick={() => setShowParticipants(!showParticipants)}
+          isActive={showParticipants}
+          activeColor="from-purple-500 to-purple-600"
+          tooltip="شرکت‌کنندگان"
+        >
+          <UserGroupIcon className="h-5 w-5" />
+        </ControlButton>
+
+        <ControlButton
+          onClick={() => setIsChat(!isChat)}
+          isActive={isChat}
+          activeColor="from-green-500 to-green-600"
+          tooltip="گفتگو"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
+          </svg>
+        </ControlButton>
+
+        <ControlButton
+          onClick={endCall}
+          isActive={true}
+          activeColor="from-red-600 to-red-700"
+          className="mx-2"
+          tooltip="پایان تماس"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"
+            />
+          </svg>
+        </ControlButton>
+      </div>
+
+      {/* پنل‌های جانبی */}
+      <AnimatePresence>
+        {showParticipants && <ParticipantsPanel />}
+        {isChat && <ChatPanel />}
+      </AnimatePresence>
+    </div>
   );
-};
+});
 
 export default MockVideoCall;
